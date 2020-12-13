@@ -1,6 +1,12 @@
 package com.mechempire.client.controller;
 
 import com.mechempire.client.config.UIConfig;
+import com.mechempire.client.service.GameMapService;
+import com.mechempire.client.service.impl.GameMapServiceImpl;
+import com.mechempire.client.util.ImageUtil;
+import com.mechempire.sdk.core.game.GameMapComponent;
+import com.mechempire.sdk.runtime.GameMap;
+import com.mechempire.sdk.runtime.GameMapComponentFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -11,13 +17,8 @@ import javafx.stage.Stage;
 import org.mapeditor.core.*;
 import org.mapeditor.io.TMXMapReader;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * package: com.mechempire.client.controller
@@ -33,9 +34,7 @@ public class GamePlayerController extends AbstractController {
     private Pane mapContainer;
 
     private TMXMapReader mapReader = new TMXMapReader();
-    private Map map = null;
-    private MapLayer layer = null;
-
+    private Map originMap = null;
 
     @Override
     public void show(Stage stage) {
@@ -48,9 +47,14 @@ public class GamePlayerController extends AbstractController {
             stage.show();
 
             // map reader
-            map = mapReader.readMap(getClass().getResource("/map/map_v1.tmx").toString());
-            for (int i = 0; i < map.getLayerCount(); i++) {
-                layer = map.getLayer(i);
+            originMap = mapReader.readMap(getClass().getResource("/map/map_v1.tmx").toString());
+            MapLayer layer = null;
+
+            GameMapService gameMapService = new GameMapServiceImpl();
+            GameMap gameMap = gameMapService.initGameMap(originMap);
+
+            for (int i = 0; i < originMap.getLayerCount(); i++) {
+                layer = originMap.getLayer(i);
                 if (layer.getName().equals("background")) {
                     mapContainer.setPrefWidth(UIConfig.WINDOW_WIDTH);
                     mapContainer.setPrefHeight(UIConfig.WINDOW_HEIGHT);
@@ -76,10 +80,10 @@ public class GamePlayerController extends AbstractController {
                     mapContainer.setPrefWidth(logoImage.getWidth());
                     mapContainer.getChildren().add(logoView);
                 } else if (layer instanceof TileLayer) {
-                    int width = map.getWidth();
-                    int height = map.getHeight();
-                    int tileWidth = map.getTileWidth();
-                    int tileHeight = map.getTileHeight();
+                    int width = originMap.getWidth();
+                    int height = originMap.getHeight();
+                    int tileWidth = originMap.getTileWidth();
+                    int tileHeight = originMap.getTileHeight();
 
                     Tile tile = null;
                     int tid;
@@ -96,7 +100,7 @@ public class GamePlayerController extends AbstractController {
                             if (tileHash.containsKey(tid)) {
                                 tileImage = tileHash.get(tid);
                             } else {
-                                tileImage = createImage(tile.getImage());
+                                tileImage = ImageUtil.awtImageToJavaxImage(tile.getImage());
                                 tileHash.put(tid, tileImage);
                             }
 
@@ -106,26 +110,30 @@ public class GamePlayerController extends AbstractController {
                             mapContainer.getChildren().add(imageView);
                         }
                     }
+                } else if (layer instanceof ObjectGroup) {
+                    List<MapObject> objectList = ((ObjectGroup) layer).getObjects();
+                    for (MapObject mapObject : objectList) {
+                        GameMapComponent gameMapComponent = GameMapComponentFactory.getGameMapComponent(layer.getName());
+
+                        if (null == gameMapComponent) {
+                            continue;
+                        }
+
+                        gameMapComponent.setName(mapObject.getName())
+                                .setAffinity(Short.parseShort(mapObject.getProperties().getProperties().get(0).getValue()))
+                                .setId(mapObject.getId())
+                                .setHeight(mapObject.getHeight())
+                                .setWidth(mapObject.getWidth())
+                                .setPositionY(mapObject.getY())
+                                .setPositionX(mapObject.getX())
+                                .setType(layer.getName());
+
+                        gameMap.addMapComponent(gameMapComponent);
+                    }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static Image createImage(java.awt.Image image) throws Exception {
-        if (!(image instanceof RenderedImage)) {
-            BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),
-                    image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-            Graphics g = bufferedImage.createGraphics();
-            g.drawImage(image, 0, 0, null);
-            g.dispose();
-            image = bufferedImage;
-        }
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ImageIO.write((RenderedImage) image, "png", out);
-        out.flush();
-        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        return new Image(in);
     }
 }
