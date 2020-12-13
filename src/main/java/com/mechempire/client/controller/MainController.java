@@ -12,7 +12,7 @@ import javafx.stage.Window;
 /**
  * package: com.mechempire.client.controller
  *
- * @author <tairy> gengrui@qury.org
+ * @author <tairy> tairyguo@gmail.com
  * @date 2020/12/12 下午5:01
  */
 public class MainController extends AbstractController {

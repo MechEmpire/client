@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 /**
  * package: com.mechempire.client.controller
  *
- * @author <tairy> gengrui@qury.org
+ * @author <tairy> tairyguo@gmail.com
  * @date 2020/12/12 下午8:45
  */
 public abstract class AbstractController {

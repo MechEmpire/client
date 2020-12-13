@@ -10,7 +10,7 @@ import javafx.util.Duration;
 /**
  * package: com.mechempire.client
  *
- * @author <tairy> gengrui@qury.org
+ * @author <tairy> tairyguo@gmail.com
  * @date 2020/12/12 下午5:02
  */
 public class MechempireClientApplication extends Application {

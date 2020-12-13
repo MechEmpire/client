@@ -3,7 +3,7 @@ package com.mechempire.client.config;
 /**
  * package: com.mechempire.client.config
  *
- * @author <tairy> gengrui@qury.org
+ * @author <tairy> tairyguo@gmail.com
  * @date 2020/12/12 下午8:37
  */
 public class UIConfig {
