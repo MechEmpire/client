@@ -2,10 +2,7 @@ package com.mechempire.client;
 
 import com.mechempire.client.controller.MainController;
 import javafx.application.Application;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /**
  * package: com.mechempire.client

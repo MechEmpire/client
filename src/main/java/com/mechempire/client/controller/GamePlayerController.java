@@ -3,18 +3,17 @@ package com.mechempire.client.controller;
 import com.mechempire.client.config.UIConfig;
 import com.mechempire.client.service.GameMapService;
 import com.mechempire.client.service.impl.GameMapServiceImpl;
-import com.mechempire.sdk.core.game.GameMapComponent;
 import com.mechempire.sdk.runtime.GameMap;
-import com.mechempire.sdk.runtime.GameMapComponentFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.mapeditor.core.*;
+import org.mapeditor.core.Map;
+import org.mapeditor.core.MapLayer;
+import org.mapeditor.core.ObjectGroup;
+import org.mapeditor.core.TileLayer;
 import org.mapeditor.io.TMXMapReader;
-
-import java.util.List;
 
 /**
  * package: com.mechempire.client.controller
