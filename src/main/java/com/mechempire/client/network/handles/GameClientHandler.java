@@ -20,18 +20,13 @@ public class GameClientHandler extends SimpleChannelInboundHandler {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Tairy123", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("Tairy", CharsetUtil.UTF_8));
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object o) throws Exception {
         ByteBuf in = (ByteBuf) o;
         log.info("client received: {}", in.toString(CharsetUtil.UTF_8));
-//        while (true) {
-//            ctx.writeAndFlush(Unpooled.copiedBuffer("Tairy", CharsetUtil.UTF_8));
-//            log.info("ping");
-//            Thread.sleep(3000);
-//        }
     }
 
     @Override

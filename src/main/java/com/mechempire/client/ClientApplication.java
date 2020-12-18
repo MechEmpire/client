@@ -30,7 +30,7 @@ public class ClientApplication {
             try {
                 MechEmpireClient mechEmpireClient = ctx.getBean(MechEmpireClient.class);
                 mechEmpireClient.run();
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 log.error("run expire client error: {}", e.getMessage(), e);
             }
         });
