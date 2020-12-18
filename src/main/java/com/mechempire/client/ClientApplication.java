@@ -2,10 +2,9 @@ package com.mechempire.client;
 
 import com.mechempire.client.network.MechEmpireClient;
 import com.mechempire.client.player.MechempirePlayer;
+import javafx.application.Application;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import javax.annotation.Resource;
 
 /**
  * package: com.mechempire.client
@@ -15,9 +14,6 @@ import javax.annotation.Resource;
  */
 @Slf4j
 public class ClientApplication {
-
-    @Resource
-    private static MechEmpireClient mechEmpireClient;
 
     /**
      * 入口函数
@@ -32,6 +28,7 @@ public class ClientApplication {
         // run network client
         Thread empireClientThread = new Thread(() -> {
             try {
+                MechEmpireClient mechEmpireClient = ctx.getBean(MechEmpireClient.class);
                 mechEmpireClient.run();
             } catch (InterruptedException e) {
                 log.error("run expire client error: {}", e.getMessage(), e);
@@ -41,7 +38,7 @@ public class ClientApplication {
 
         // run player
         Thread mechempirePlayerThread = new Thread(() -> {
-            MechempirePlayer.launch(args);
+            Application.launch(MechempirePlayer.class, args);
         });
         mechempirePlayerThread.start();
         ctx.close();

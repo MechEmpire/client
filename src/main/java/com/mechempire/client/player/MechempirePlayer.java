@@ -3,10 +3,7 @@ package com.mechempire.client.player;
 import com.mechempire.client.controller.MainController;
 import com.mechempire.client.network.MechEmpireClient;
 import javafx.application.Application;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -27,10 +24,10 @@ public class MechempirePlayer extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Media media = new Media(getClass().getResource("/4709.wav").toExternalForm());
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setAutoPlay(true);
-        mediaPlayer.setStartTime(Duration.seconds(10));
+//        Media media = new Media(getClass().getResource("/4709.wav").toExternalForm());
+//        MediaPlayer mediaPlayer = new MediaPlayer(media);
+//        mediaPlayer.setAutoPlay(true);
+//        mediaPlayer.setStartTime(Duration.seconds(10));
         MainController mainController = new MainController();
         mainController.show(primaryStage);
     }

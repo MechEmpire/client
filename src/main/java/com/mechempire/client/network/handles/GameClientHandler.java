@@ -6,6 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /**
  * package: com.mechempire.client.network.handles
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2020/12/17 下午4:37
  */
 @Slf4j
+@Component
 public class GameClientHandler extends SimpleChannelInboundHandler {
 
     @Override
