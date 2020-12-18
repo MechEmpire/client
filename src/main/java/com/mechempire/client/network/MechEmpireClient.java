@@ -10,10 +10,10 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.net.InetSocketAddress;
 
 /**
@@ -28,28 +28,34 @@ import java.net.InetSocketAddress;
 @Component
 public class MechEmpireClient implements IClient {
 
-    @Resource
-    private GameClientHandler gameClientHandler;
-
     @Override
     public void run() throws InterruptedException {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap clientBootstrap = new Bootstrap();
-            clientBootstrap.group(group)
+            ChannelFuture channelFuture = clientBootstrap.group(group)
                     .channel(NioSocketChannel.class)
                     .option(ChannelOption.SO_KEEPALIVE, true)
-                    .remoteAddress(new InetSocketAddress(ServerConstant.host, ServerConstant.port));
-            log.info("client try connect {}:{}", ServerConstant.host, ServerConstant.host);
-            clientBootstrap.handler(new ChannelInitializer<SocketChannel>() {
-                @Override
-                protected void initChannel(SocketChannel socketChannel) throws Exception {
-                    log.info("client trigger connect.");
-                    socketChannel.pipeline().addLast(gameClientHandler);
-                }
-            });
+                    .remoteAddress(new InetSocketAddress(ServerConstant.host, ServerConstant.port))
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            log.info("client trigger connect.");
+                            socketChannel.pipeline().addLast(
+                                    new IdleStateHandler(
+                                            ServerConstant.SESSION_HEART_READ_TIMEOUT,
+                                            ServerConstant.SESSION_HEART_WRITE_TIMEOUT,
+                                            ServerConstant.SESSION_HEART_ALL_TIMEOUT
+                                    )
+                            );
+                            GameClientHandler gameClientHandler = new GameClientHandler();
+                            socketChannel.pipeline().addLast(gameClientHandler);
+                        }
+                    })
+                    .connect()
+                    .sync();
 
-            ChannelFuture channelFuture = clientBootstrap.connect().sync();
+            log.info("client try connect {}:{}", ServerConstant.host, ServerConstant.host);
             if (channelFuture.isSuccess()) {
                 log.info("client connect success!");
             }
