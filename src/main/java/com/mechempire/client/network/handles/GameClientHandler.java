@@ -1,5 +1,6 @@
 package com.mechempire.client.network.handles;
 
+import com.mechempire.client.network.MechEmpireClient;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,7 +17,13 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class GameClientHandler extends SimpleChannelInboundHandler {
+public class GameClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+
+    private MechEmpireClient mechEmpireClient;
+
+    public GameClientHandler(MechEmpireClient mechEmpireClient) {
+        this.mechEmpireClient = mechEmpireClient;
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -24,9 +31,8 @@ public class GameClientHandler extends SimpleChannelInboundHandler {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object o) throws Exception {
-        ByteBuf in = (ByteBuf) o;
-        log.info("client received: {}", in.toString(CharsetUtil.UTF_8));
+    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf byteBuf) throws Exception {
+        log.info("client received: {}", byteBuf.toString(CharsetUtil.UTF_8));
     }
 
     @Override
@@ -39,5 +45,11 @@ public class GameClientHandler extends SimpleChannelInboundHandler {
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         log.info("client request finished ...");
         ctx.flush();
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        mechEmpireClient.doConnect();
     }
 }

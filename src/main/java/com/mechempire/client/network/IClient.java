@@ -8,5 +8,5 @@ package com.mechempire.client.network;
  */
 public interface IClient {
 
-    void run() throws Exception;
+    void run();
 }
