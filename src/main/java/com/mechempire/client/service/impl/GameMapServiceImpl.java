@@ -3,9 +3,9 @@ package com.mechempire.client.service.impl;
 import com.mechempire.client.config.UIConfig;
 import com.mechempire.client.service.GameMapService;
 import com.mechempire.client.util.ImageUtil;
-import com.mechempire.sdk.core.game.GameMapComponent;
+import com.mechempire.sdk.core.factory.GameMapComponentFactoryProducer;
+import com.mechempire.sdk.core.game.AbstractGameMapComponent;
 import com.mechempire.sdk.runtime.GameMap;
-import com.mechempire.sdk.runtime.GameMapComponentFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -89,12 +89,11 @@ public class GameMapServiceImpl implements GameMapService {
     @Override
     public GameMap initGameMapObject(Map originMap) {
         GameMap gameMap = new GameMap();
-
-        gameMap.setWidth(originMap.getWidth() * originMap.getTileWidth())
-                .setHeight(originMap.getHeight() * originMap.getTileHeight())
-                .setName(originMap.getFilename())
-                .setGridWidth(originMap.getTileWidth())
-                .setGridHeight(originMap.getTileHeight());
+        gameMap.setWidth(originMap.getWidth() * originMap.getTileWidth());
+        gameMap.setLength(originMap.getHeight() * originMap.getTileHeight());
+        gameMap.setName(originMap.getFilename());
+        gameMap.setGridWidth(originMap.getTileWidth());
+        gameMap.setGridLength(originMap.getTileHeight());
         return gameMap;
     }
 
@@ -102,20 +101,21 @@ public class GameMapServiceImpl implements GameMapService {
     public void initGameMapComponent(MapLayer layer, GameMap gameMap) {
         List<MapObject> objectList = ((ObjectGroup) layer).getObjects();
         for (MapObject mapObject : objectList) {
-            GameMapComponent gameMapComponent = GameMapComponentFactory.getGameMapComponent(layer.getName());
+            AbstractGameMapComponent gameMapComponent =
+                    GameMapComponentFactoryProducer.getComponent(layer.getName(), (short) 1);
 
             if (null == gameMapComponent) {
                 continue;
             }
 
-            gameMapComponent.setName(mapObject.getName())
-                    .setAffinity(Short.parseShort(mapObject.getProperties().getProperties().get(0).getValue()))
-                    .setId(mapObject.getId())
-                    .setHeight(mapObject.getHeight())
-                    .setWidth(mapObject.getWidth())
-                    .setPositionY(mapObject.getY())
-                    .setPositionX(mapObject.getX())
-                    .setType(layer.getName());
+            gameMapComponent.setName(mapObject.getName());
+            gameMapComponent.setAffinity(Short.parseShort(mapObject.getProperties().getProperties().get(0).getValue()));
+            gameMapComponent.setId(mapObject.getId());
+            gameMapComponent.setLength(mapObject.getHeight());
+            gameMapComponent.setWidth(mapObject.getWidth());
+//            gameMapComponent.setPositionY(mapObject.getY());
+//            gameMapComponent.setPositionX(mapObject.getX());
+            gameMapComponent.setType(layer.getName());
 
             gameMap.addMapComponent(gameMapComponent);
         }

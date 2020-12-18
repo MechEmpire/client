@@ -1,6 +1,7 @@
 package com.mechempire.client.util;
 
 import javafx.scene.image.Image;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -15,6 +16,7 @@ import java.io.ByteArrayOutputStream;
  * @author <tairy> tairyguo@gmail.com
  * @date 2020/12/13 下午5:52
  */
+@Slf4j
 public class ImageUtil {
 
     /**
@@ -39,7 +41,7 @@ public class ImageUtil {
             ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
             return new Image(in);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("image convert error: {}", e.getMessage(), e);
         }
 
         return null;
