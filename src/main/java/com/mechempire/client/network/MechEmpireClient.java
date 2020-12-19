@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -51,10 +50,9 @@ public class MechEmpireClient implements IClient {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(
-                                    new IdleStateHandler(0, 0, 5)
+                                    new IdleStateHandler(5, 5, 5)
                             );
                             socketChannel.pipeline().addLast(new GameClientHandler(MechEmpireClient.this));
-                            socketChannel.pipeline().addLast(new CommonHeartBeatHandler());
                         }
                     });
 
@@ -66,7 +64,6 @@ public class MechEmpireClient implements IClient {
     }
 
     public void sendData() {
-//        Random random = new Random(System.currentTimeMillis());
         for (int i = 0; i < 10000; i++) {
             if (null != channel && channel.isActive()) {
                 String content = "client msg " + i;
@@ -90,15 +87,23 @@ public class MechEmpireClient implements IClient {
             return;
         }
 
-        ChannelFuture channelFuture = clientBootstrap.connect(ServerConstant.host, ServerConstant.port);
-        channelFuture.addListener((ChannelFutureListener) future -> {
-            if (future.isSuccess()) {
-                channel = future.channel();
-                log.info("connect to server successfully!");
-            } else {
-                log.info("failed connect to server, try after 10s.");
-                future.channel().eventLoop().schedule(this::doConnect, 10, TimeUnit.SECONDS);
-            }
-        });
+        try {
+            // 连接
+            ChannelFuture channelFuture = clientBootstrap.connect(ServerConstant.host, ServerConstant.port).sync();
+            channelFuture.addListener((ChannelFutureListener) future -> {
+                if (future.isSuccess()) {
+                    channel = future.channel();
+                    log.info("connect to server successfully!");
+                } else {
+                    log.info("failed connect to server, try after 10s.");
+                    future.channel().eventLoop().schedule(this::doConnect, 10, TimeUnit.SECONDS);
+                }
+            });
+
+            // 等待连接关闭
+            channelFuture.channel().closeFuture().sync();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

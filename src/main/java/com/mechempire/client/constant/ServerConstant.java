@@ -12,7 +12,7 @@ public class ServerConstant {
     /**
      * server host
      */
-    public static final String host = "localhost";
+    public static final String host = "192.168.2.11";
 
     /**
      * server port
