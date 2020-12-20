@@ -11,6 +11,10 @@ import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 /**
  * package: com.mechempire.client.network.handles
  *
@@ -21,11 +25,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class GameClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
-    private MechEmpireClient mechEmpireClient;
-
-    public GameClientHandler(MechEmpireClient mechEmpireClient) {
-        this.mechEmpireClient = mechEmpireClient;
+    public GameClientHandler() {
+        super(false);
     }
+
+    @Resource
+    private MechEmpireClient mechEmpireClient;
 
     /**
      * 建立连接, 准备进行通信时会调用
@@ -36,33 +41,26 @@ public class GameClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         log.info("channel active, send message to server.");
-        log.info("channel_is_active_in_active: {}", ctx.channel().isActive());
-
-//        Thread.sleep(10000);
         ctx.writeAndFlush(Unpooled.copiedBuffer("Tairy", CharsetUtil.UTF_8)).sync();
         ctx.flush();
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Tairy1", CharsetUtil.UTF_8)).sync();
-        ctx.flush();
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("Tairy2", CharsetUtil.UTF_8)).sync();
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("Tairy3", CharsetUtil.UTF_8)).sync();
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf byteBuf) throws Exception {
         log.info("client received message: {}", byteBuf.toString(CharsetUtil.UTF_8));
-        log.info("channel_is_active_in_read0: {}", ctx.channel().isActive());
+//        ctx.write(Unpooled.copiedBuffer("come on babe.", CharsetUtil.UTF_8));
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        log.error("client exception: {}", cause.getMessage(), cause);
+        if (!(cause instanceof IOException)) {
+            log.error("client exception: {}", cause.getMessage(), cause);
+        }
         ctx.close();
     }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        log.info("channel read complete.");
-        log.info("channel_is_active_in_read_complete: {}", ctx.channel().isActive());
         ctx.flush();
     }
 
@@ -70,16 +68,21 @@ public class GameClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         super.channelUnregistered(ctx);
         log.info("channel unregistered");
-//        ctx.channel().eventLoop().schedule(() -> {
-//            log.info("reconnect to server.");
-//            mechEmpireClient.doConnect();
-//        }, 10, TimeUnit.SECONDS);
+        ctx.channel().eventLoop().schedule(() -> {
+            log.info("reconnect to server.");
+            mechEmpireClient.doConnect();
+        }, 10, TimeUnit.SECONDS);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("channel inactive.");
         super.channelInactive(ctx);
+        log.info("channel inactive.");
+        ctx.flush();
+        ctx.channel().eventLoop().schedule(() -> {
+            log.info("reconnect to server.");
+            mechEmpireClient.doConnect();
+        }, 10, TimeUnit.SECONDS);
     }
 
     @Override
@@ -90,11 +93,11 @@ public class GameClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
         IdleStateEvent e = (IdleStateEvent) evt;
         if (e.state() == IdleState.READER_IDLE) {
-            ctx.writeAndFlush(Unpooled.copiedBuffer("ping", CharsetUtil.UTF_8)).sync();
-            ctx.flush();
-            log.info("disconnection due to no inbound traffic.");
-            Thread.sleep(10000);
-            ctx.close();
+            if (null != ctx.channel() && ctx.channel().isActive()) {
+                ctx.writeAndFlush(Unpooled.copiedBuffer("ping", CharsetUtil.UTF_8)).sync();
+            } else {
+                mechEmpireClient.doConnect();
+            }
         }
     }
 }
