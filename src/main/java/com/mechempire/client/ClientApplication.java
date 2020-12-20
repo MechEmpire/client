@@ -1,8 +1,10 @@
 package com.mechempire.client;
 
-import com.mechempire.client.network.MechEmpireClient;
-import com.mechempire.client.player.MechempirePlayer;
+import com.mechempire.client.factory.SceneFactory;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -13,7 +15,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @date 2020/12/18 上午11:59
  */
 @Slf4j
-public class ClientApplication {
+public class ClientApplication extends Application {
+
+    private Parent parent;
+
+    private final AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
 
     /**
      * 入口函数
@@ -21,26 +27,28 @@ public class ClientApplication {
      * @param args 参数
      */
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        Application.launch(args);
+    }
+
+    @Override
+    public void init() throws Exception {
         ctx.scan("com.mechempire");
         ctx.refresh();
 
-        // run network client
-        Thread empireClientThread = new Thread(() -> {
-            try {
-                MechEmpireClient mechEmpireClient = ctx.getBean(MechEmpireClient.class);
-                mechEmpireClient.run();
-            } catch (Exception e) {
-                log.error("run expire client error: {}", e.getMessage(), e);
-            }
-        });
-        empireClientThread.start();
+        // init fxml loader
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+        fxmlLoader.setControllerFactory(ctx::getBean);
+        parent = fxmlLoader.load();
+    }
 
-        // run player
-        Thread mechempirePlayerThread = new Thread(() -> {
-            Application.launch(MechempirePlayer.class, args);
-        });
-        mechempirePlayerThread.start();
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        SceneFactory.initStage(parent, primaryStage);
+        primaryStage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
         ctx.close();
     }
 }

@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.mapeditor.core.*;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author <tairy> tairyguo@gmail.com
  * @date 2020/12/13 下午3:15
  */
+@Service("GameMapService")
 public class GameMapServiceImpl implements GameMapService {
 
     @Override

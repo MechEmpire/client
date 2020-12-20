@@ -34,9 +34,6 @@ public class MechEmpireClient implements IClient {
 
     private Bootstrap clientBootstrap;
 
-//    @Resource
-//    private GameClientHandler gameClientHandler;
-
     @Override
     public void run() throws Exception {
         try {

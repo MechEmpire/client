@@ -1,6 +1,6 @@
 package com.mechempire.client.controller;
 
-import com.mechempire.client.config.UIConfig;
+import com.mechempire.client.factory.SceneFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * package: com.mechempire.client.controller
@@ -15,6 +16,7 @@ import javafx.stage.Window;
  * @author <tairy> tairyguo@gmail.com
  * @date 2020/12/12 下午5:01
  */
+@Slf4j
 public class MainController extends AbstractController {
 
     private static final String FXML_FILE = "/fxml/main.fxml";
@@ -45,12 +47,10 @@ public class MainController extends AbstractController {
     public void show(Stage stage) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource(FXML_FILE));
-            stage.setTitle(UIConfig.WINDOW_TITLE);
-            stage.setScene(new Scene(root, UIConfig.WINDOW_WIDTH, UIConfig.WINDOW_HEIGHT));
-            stage.setResizable(false);
+            SceneFactory.initStage(root, stage);
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("show main state error: {}", e.getMessage(), e);
         }
     }
 }

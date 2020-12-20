@@ -1,13 +1,12 @@
 package com.mechempire.client.player;
 
-import com.mechempire.client.controller.MainController;
-import com.mechempire.client.network.MechEmpireClient;
+import com.mechempire.client.factory.SceneFactory;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * package: com.mechempire.client
@@ -19,8 +18,20 @@ import javax.annotation.Resource;
 @Component
 public class MechempirePlayer extends Application {
 
-    @Resource
-    private MechEmpireClient mechEmpireClient;
+//    @Resource
+//    private MechEmpireClient mechEmpireClient;
+
+//    @Resource
+//    private MainController mainController;
+
+    private Parent parent;
+
+    @Override
+    public void init() throws Exception {
+//        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+//        fxmlLoader.setControllerFactory();
+//        parent = fxmlLoader.load();
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -28,7 +39,15 @@ public class MechempirePlayer extends Application {
 //        MediaPlayer mediaPlayer = new MediaPlayer(media);
 //        mediaPlayer.setAutoPlay(true);
 //        mediaPlayer.setStartTime(Duration.seconds(10));
-        MainController mainController = new MainController();
-        mainController.show(primaryStage);
+//        MainController mainController = new MainController();
+//        mainController.show(primaryStage);
+
+//        Parent root = FXMLLoader.load(getClass().getResource(FXML_FILE));
+//        SceneFactory.initStage(parent, primaryStage);
+//        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+//        launch(args);
     }
 }

@@ -1,12 +1,10 @@
 package com.mechempire.client.controller;
 
-import com.mechempire.client.config.UIConfig;
+import com.mechempire.client.factory.SceneFactory;
 import com.mechempire.client.service.GameMapService;
-import com.mechempire.client.service.impl.GameMapServiceImpl;
 import com.mechempire.sdk.runtime.GameMap;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.mapeditor.core.Map;
@@ -14,6 +12,9 @@ import org.mapeditor.core.MapLayer;
 import org.mapeditor.core.ObjectGroup;
 import org.mapeditor.core.TileLayer;
 import org.mapeditor.io.TMXMapReader;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * package: com.mechempire.client.controller
@@ -21,6 +22,7 @@ import org.mapeditor.io.TMXMapReader;
  * @author <tairy> tairyguo@gmail.com
  * @date 2020/12/12 下午8:27
  */
+@Component
 public class GamePlayerController extends AbstractController {
 
     private static final String FXML_FILE = "/fxml/game_player.fxml";
@@ -28,14 +30,15 @@ public class GamePlayerController extends AbstractController {
     @FXML
     private Pane mapContainer;
 
+    @Resource
+    private GameMapService gameMapService;
+
     @Override
     public void show(Stage stage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML_FILE));
             fxmlLoader.setController(this);
-            Scene newScene = new Scene(fxmlLoader.load(), UIConfig.WINDOW_WIDTH, UIConfig.WINDOW_HEIGHT);
-            stage.setTitle(UIConfig.WINDOW_TITLE);
-            stage.setScene(newScene);
+            SceneFactory.initStage(fxmlLoader.load(), stage);
             stage.show();
 
             // map reader
@@ -44,7 +47,6 @@ public class GamePlayerController extends AbstractController {
             originMap = mapReader.readMap(getClass().getResource("/map/map_v1.tmx").toString());
             MapLayer layer = null;
 
-            GameMapService gameMapService = new GameMapServiceImpl();
             GameMap gameMap = gameMapService.initGameMapObject(originMap);
 
             for (int i = 0; i < originMap.getLayerCount(); i++) {
