@@ -1,9 +1,8 @@
 package com.mechempire.client;
 
-import com.mechempire.client.factory.SceneFactory;
+import com.mechempire.client.event.StageReadyEvent;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -17,8 +16,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 @Slf4j
 public class ClientApplication extends Application {
 
-    private Parent parent;
-
+    /**
+     * Spring 上下文对象
+     */
     private final AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
 
     /**
@@ -34,21 +34,16 @@ public class ClientApplication extends Application {
     public void init() throws Exception {
         ctx.scan("com.mechempire");
         ctx.refresh();
-
-        // init fxml loader
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
-        fxmlLoader.setControllerFactory(ctx::getBean);
-        parent = fxmlLoader.load();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        SceneFactory.initStage(parent, primaryStage);
-        primaryStage.show();
+        ctx.publishEvent(new StageReadyEvent(primaryStage));
     }
 
     @Override
     public void stop() throws Exception {
         ctx.close();
+        Platform.exit();
     }
 }

@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 
 /**
  * package: com.mechempire.client.controller
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2020/12/12 下午5:01
  */
 @Slf4j
+@Controller
 public class MainController extends AbstractController {
 
     private static final String FXML_FILE = "/fxml/main.fxml";

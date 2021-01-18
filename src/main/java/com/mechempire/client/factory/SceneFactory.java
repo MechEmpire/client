@@ -28,4 +28,13 @@ public class SceneFactory {
         stage.setMaxHeight(UIConfig.WINDOW_HEIGHT);
         stage.setScene(scene);
     }
+
+
+    public static void initCommonStage(Stage stage) {
+        stage.setTitle(UIConfig.WINDOW_TITLE);
+        stage.setMinWidth(UIConfig.WINDOW_WIDTH);
+        stage.setMinHeight(UIConfig.WINDOW_HEIGHT);
+        stage.setMaxWidth(UIConfig.WINDOW_WIDTH);
+        stage.setMaxHeight(UIConfig.WINDOW_HEIGHT);
+    }
 }
