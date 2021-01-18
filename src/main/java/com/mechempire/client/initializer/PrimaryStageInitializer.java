@@ -20,6 +20,8 @@ import javafx.stage.Window;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 /**
  * package: com.mechempire.client.initializer
  *
@@ -29,12 +31,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class PrimaryStageInitializer implements ApplicationListener<StageReadyEvent> {
 
+    @Resource
+    GamePlayerController gamePlayerController;
+
     @Override
     public void onApplicationEvent(StageReadyEvent stageReadyEvent) {
         Stage primaryStage = stageReadyEvent.stage;
 
         SceneFactory.initCommonStage(primaryStage);
         Pane root = new Pane();
+
         root.setStyle(UIConfig.MAIN_SCENE_BACKGROUND);
         Image image = new Image(getClass().getResourceAsStream("/logo.png"));
         ImageView imageView = new ImageView(image);
@@ -61,8 +67,6 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
                 Scene scene = ((Button) actionEvent.getSource()).getScene();
                 Window window = scene.getWindow();
                 Stage stage = (Stage) window;
-
-                GamePlayerController gamePlayerController = new GamePlayerController();
                 gamePlayerController.show(stage);
             }
         });

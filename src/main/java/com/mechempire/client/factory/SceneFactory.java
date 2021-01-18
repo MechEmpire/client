@@ -30,6 +30,11 @@ public class SceneFactory {
     }
 
 
+    /**
+     * 初始化通用 stage
+     *
+     * @param stage stage
+     */
     public static void initCommonStage(Stage stage) {
         stage.setTitle(UIConfig.WINDOW_TITLE);
         stage.setMinWidth(UIConfig.WINDOW_WIDTH);

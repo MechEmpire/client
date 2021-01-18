@@ -1,12 +1,13 @@
 package com.mechempire.client.controller;
 
+import com.mechempire.client.config.UIConfig;
 import com.mechempire.client.factory.SceneFactory;
 import com.mechempire.client.service.GameMapService;
 import com.mechempire.sdk.runtime.GameMap;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import org.mapeditor.core.Map;
 import org.mapeditor.core.MapLayer;
 import org.mapeditor.core.ObjectGroup;
@@ -23,12 +24,8 @@ import javax.annotation.Resource;
  * @date 2020/12/12 下午8:27
  */
 @Component
+@Slf4j
 public class GamePlayerController extends AbstractController {
-
-    private static final String FXML_FILE = "/fxml/game_player.fxml";
-
-    @FXML
-    private Pane mapContainer;
 
     @Resource
     private GameMapService gameMapService;
@@ -36,11 +33,7 @@ public class GamePlayerController extends AbstractController {
     @Override
     public void show(Stage stage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML_FILE));
-            fxmlLoader.setController(this);
-            SceneFactory.initStage(fxmlLoader.load(), stage);
-            stage.show();
-
+            Pane mapContainer = new Pane();
             // map reader
             TMXMapReader mapReader = new TMXMapReader();
             Map originMap = null;
@@ -61,8 +54,11 @@ public class GamePlayerController extends AbstractController {
                     gameMapService.initGameMapComponent(layer, gameMap);
                 }
             }
+            SceneFactory.initCommonStage(stage);
+            stage.setScene(new Scene(mapContainer, UIConfig.WINDOW_HEIGHT, UIConfig.WINDOW_HEIGHT));
+            stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("init map error: {}", e.getMessage(), e);
         }
     }
 }
