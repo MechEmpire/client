@@ -1,9 +1,6 @@
 package com.mechempire.client.controller;
 
-import com.mechempire.client.factory.SceneFactory;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -47,12 +44,12 @@ public class MainController extends AbstractController {
      */
     @Override
     public void show(Stage stage) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource(FXML_FILE));
-            SceneFactory.initStage(root, stage);
-            stage.show();
-        } catch (Exception e) {
-            log.error("show main state error: {}", e.getMessage(), e);
-        }
+//        try {
+//            Parent root = FXMLLoader.load(getClass().getResource(FXML_FILE));
+//            SceneFactory.initStage(root, stage);
+//            stage.show();
+//        } catch (Exception e) {
+//            log.error("show main state error: {}", e.getMessage(), e);
+//        }
     }
 }

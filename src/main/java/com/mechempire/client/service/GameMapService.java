@@ -22,12 +22,12 @@ public interface GameMapService {
     void initGameMapBackground(MapLayer layer, Pane mapContainer);
 
     /**
-     * 初始化地图 logo, 后续可以将背景图和 logo 合并
+     * 初始化地图对象
      *
      * @param layer        地图层对象
      * @param mapContainer 地图容器对象
      */
-    void initGameMapLogo(MapLayer layer, Pane mapContainer);
+    void initGameMapTile(MapLayer layer, Pane mapContainer);
 
     /**
      * 初始化 tile 层

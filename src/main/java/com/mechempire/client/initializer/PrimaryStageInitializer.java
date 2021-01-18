@@ -37,10 +37,9 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
     @Override
     public void onApplicationEvent(StageReadyEvent stageReadyEvent) {
         Stage primaryStage = stageReadyEvent.stage;
-
         SceneFactory.initCommonStage(primaryStage);
-        Pane root = new Pane();
 
+        Pane root = new Pane();
         root.setStyle(UIConfig.MAIN_SCENE_BACKGROUND);
         Image image = new Image(getClass().getResourceAsStream("/logo.png"));
         ImageView imageView = new ImageView(image);
@@ -72,7 +71,7 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
         });
 
         root.getChildren().addAll(imageView, button);
-        primaryStage.setScene(new Scene(root, UIConfig.WINDOW_HEIGHT, UIConfig.WINDOW_HEIGHT));
+        primaryStage.setScene(new Scene(root, UIConfig.WINDOW_WIDTH, UIConfig.WINDOW_HEIGHT));
         primaryStage.show();
     }
 }

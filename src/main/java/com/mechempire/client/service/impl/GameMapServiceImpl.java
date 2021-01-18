@@ -2,6 +2,7 @@ package com.mechempire.client.service.impl;
 
 import com.mechempire.client.config.UIConfig;
 import com.mechempire.client.service.GameMapService;
+import com.mechempire.client.util.CoordinateUtil;
 import com.mechempire.client.util.ImageUtil;
 import com.mechempire.sdk.core.factory.GameMapComponentFactoryProducer;
 import com.mechempire.sdk.core.game.AbstractGameMapComponent;
@@ -28,7 +29,13 @@ public class GameMapServiceImpl implements GameMapService {
     public void initGameMapBackground(MapLayer layer, Pane mapContainer) {
         ImageData backgroundImageData = ((ImageLayer) layer).getImage();
         BackgroundImage backgroundImage = new BackgroundImage(
-                new Image(backgroundImageData.getSource(), backgroundImageData.getWidth(), backgroundImageData.getHeight(), false, true),
+                new Image(
+                        backgroundImageData.getSource(),
+                        CoordinateUtil.coordinateXConvert(backgroundImageData.getWidth()),
+                        CoordinateUtil.coordinateYConvert(backgroundImageData.getHeight()),
+                        false,
+                        true
+                ),
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER,
@@ -40,18 +47,20 @@ public class GameMapServiceImpl implements GameMapService {
     }
 
     @Override
-    public void initGameMapLogo(MapLayer layer, Pane mapContainer) {
-        ImageData logoImageData = ((ImageLayer) layer).getImage();
-        Image logoImage = new Image(logoImageData.getSource());
-        ImageView logoView = new ImageView(logoImage);
-        logoView.setX(layer.getOffsetX());
-        logoView.setY(layer.getOffsetY());
-        logoView.setFitWidth(logoImage.getWidth());
-        logoView.setFitHeight(logoImageData.getHeight());
-        logoView.setOpacity(layer.getOpacity());
-        mapContainer.setPrefHeight(logoImage.getHeight());
-        mapContainer.setPrefWidth(logoImage.getWidth());
-        mapContainer.getChildren().add(logoView);
+    public void initGameMapTile(MapLayer layer, Pane mapContainer) {
+        ImageData imageData = ((ImageLayer) layer).getImage();
+        Image image = new Image(imageData.getSource());
+        ImageView view = new ImageView(image);
+        view.setX(CoordinateUtil.coordinateXConvert(layer.getOffsetX()));
+        view.setY(CoordinateUtil.coordinateYConvert(layer.getOffsetY()));
+        view.setFitWidth(CoordinateUtil.coordinateXConvert(imageData.getWidth()));
+        view.setFitHeight(CoordinateUtil.coordinateYConvert(imageData.getHeight()));
+        if (null != layer.getOpacity()) {
+            view.setOpacity(layer.getOpacity());
+        }
+        mapContainer.setPrefHeight(CoordinateUtil.coordinateYConvert(image.getHeight()));
+        mapContainer.setPrefWidth(CoordinateUtil.coordinateXConvert(image.getWidth()));
+        mapContainer.getChildren().add(view);
     }
 
     @Override
@@ -81,8 +90,8 @@ public class GameMapServiceImpl implements GameMapService {
                 }
 
                 ImageView imageView = new ImageView(tileImage);
-                imageView.setTranslateX(x * tileWidth);
-                imageView.setTranslateY(y * tileHeight);
+                imageView.setTranslateX(x * CoordinateUtil.coordinateXConvert(tileWidth));
+                imageView.setTranslateY(y * CoordinateUtil.coordinateYConvert(tileHeight));
                 mapContainer.getChildren().add(imageView);
             }
         }
@@ -93,9 +102,9 @@ public class GameMapServiceImpl implements GameMapService {
         GameMap gameMap = new GameMap();
         gameMap.setWidth(originMap.getWidth() * originMap.getTileWidth());
         gameMap.setLength(originMap.getHeight() * originMap.getTileHeight());
-        gameMap.setName(originMap.getFilename());
         gameMap.setGridWidth(originMap.getTileWidth());
         gameMap.setGridLength(originMap.getTileHeight());
+        gameMap.setName(originMap.getFilename());
         return gameMap;
     }
 

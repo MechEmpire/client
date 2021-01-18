@@ -7,6 +7,12 @@ package com.mechempire.client.config;
  * @date 2020/12/12 下午8:37
  */
 public class UIConfig {
+
+
+    public static final double BASE_WINDOW_WIDTH = 1280;
+
+    public static final double BASE_WINDOW_HEIGHT = 1280;
+
     /**
      * 客户端窗口宽度
      */

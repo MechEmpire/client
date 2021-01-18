@@ -8,10 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import org.mapeditor.core.Map;
-import org.mapeditor.core.MapLayer;
-import org.mapeditor.core.ObjectGroup;
-import org.mapeditor.core.TileLayer;
+import org.mapeditor.core.*;
 import org.mapeditor.io.TMXMapReader;
 import org.springframework.stereotype.Component;
 
@@ -44,10 +41,13 @@ public class GamePlayerController extends AbstractController {
 
             for (int i = 0; i < originMap.getLayerCount(); i++) {
                 layer = originMap.getLayer(i);
-                if (layer.getName().equals("background")) {
-                    gameMapService.initGameMapBackground(layer, mapContainer);
-                } else if (layer.getName().equals("logo")) {
-                    gameMapService.initGameMapLogo(layer, mapContainer);
+
+                if (layer instanceof ImageLayer) {
+                    if (layer.getName().equals("background")) {
+                        gameMapService.initGameMapBackground(layer, mapContainer);
+                    } else {
+                        gameMapService.initGameMapTile(layer, mapContainer);
+                    }
                 } else if (layer instanceof TileLayer) {
                     gameMapService.initTileLayer(originMap, layer, mapContainer);
                 } else if (layer instanceof ObjectGroup) {
@@ -55,7 +55,7 @@ public class GamePlayerController extends AbstractController {
                 }
             }
             SceneFactory.initCommonStage(stage);
-            stage.setScene(new Scene(mapContainer, UIConfig.WINDOW_HEIGHT, UIConfig.WINDOW_HEIGHT));
+            stage.setScene(new Scene(mapContainer, UIConfig.WINDOW_WIDTH, UIConfig.WINDOW_HEIGHT));
             stage.show();
         } catch (Exception e) {
             log.error("init map error: {}", e.getMessage(), e);
