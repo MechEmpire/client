@@ -8,7 +8,10 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import org.mapeditor.core.*;
+import org.mapeditor.core.ImageLayer;
+import org.mapeditor.core.Map;
+import org.mapeditor.core.MapLayer;
+import org.mapeditor.core.ObjectGroup;
 import org.mapeditor.io.TMXMapReader;
 import org.springframework.stereotype.Component;
 
@@ -48,13 +51,35 @@ public class GamePlayerController extends AbstractController {
                     } else {
                         gameMapService.initGameMapTile(layer, mapContainer);
                     }
-                } else if (layer instanceof TileLayer) {
-                    gameMapService.initTileLayer(originMap, layer, mapContainer);
                 } else if (layer instanceof ObjectGroup) {
                     gameMapService.initGameMapComponent(layer, gameMap);
                 }
             }
             SceneFactory.initCommonStage(stage);
+
+//            HashMap<Integer, AbstractGameMapComponent> components = gameMap.getComponents();
+//            components.forEach((k, v) -> {
+//                AbstractGameMapComponent component = gameMap.getMapComponent(v.getId());
+//
+//                if (v.getShape() instanceof Rectangle2D) {
+//                    Rectangle rectangle = new Rectangle();
+//                    rectangle.setX(component.getStartX());
+//                    rectangle.setY(component.getStartY());
+//                    rectangle.setWidth(component.getWidth());
+//                    rectangle.setHeight(component.getLength());
+//                    rectangle.setFill(Paint.valueOf("#ffffff"));
+//                    mapContainer.getChildren().add(rectangle);
+//                } else if (v.getShape() instanceof Ellipse2D) {
+//                    Ellipse ellipse = new Ellipse();
+//                    ellipse.setCenterX(component.getStartX() + component.getWidth() / 2.0);
+//                    ellipse.setCenterY(component.getStartY() + component.getLength() / 2.0);
+//                    ellipse.setRadiusX(component.getWidth() / 2.0);
+//                    ellipse.setRadiusY(component.getLength() / 2.0);
+//                    ellipse.setFill(Paint.valueOf("#ffffff"));
+//                    mapContainer.getChildren().add(ellipse);
+//                }
+//            });
+
             stage.setScene(new Scene(mapContainer, UIConfig.WINDOW_WIDTH, UIConfig.WINDOW_HEIGHT));
             stage.show();
         } catch (Exception e) {

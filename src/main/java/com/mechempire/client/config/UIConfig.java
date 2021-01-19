@@ -24,6 +24,11 @@ public class UIConfig {
     public static final double WINDOW_HEIGHT = 640;
 
     /**
+     * 窗口顶部 bar 高度
+     */
+    public static final double WINDOW_BAR_HEIGHT = 20;
+
+    /**
      * 客户端窗口标题
      */
     public static final String WINDOW_TITLE = "MechEmpire - 机甲帝国";

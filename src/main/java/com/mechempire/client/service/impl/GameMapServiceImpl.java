@@ -1,10 +1,9 @@
 package com.mechempire.client.service.impl;
 
-import com.mechempire.client.config.UIConfig;
 import com.mechempire.client.service.GameMapService;
 import com.mechempire.client.util.CoordinateUtil;
 import com.mechempire.client.util.ImageUtil;
-import com.mechempire.sdk.core.factory.GameMapComponentFactoryProducer;
+import com.mechempire.sdk.core.factory.GameMapComponentFactory;
 import com.mechempire.sdk.core.game.AbstractGameMapComponent;
 import com.mechempire.sdk.runtime.GameMap;
 import javafx.scene.image.Image;
@@ -41,8 +40,6 @@ public class GameMapServiceImpl implements GameMapService {
                 BackgroundPosition.CENTER,
                 BackgroundSize.DEFAULT
         );
-        mapContainer.setPrefWidth(UIConfig.WINDOW_WIDTH);
-        mapContainer.setPrefHeight(UIConfig.WINDOW_HEIGHT);
         mapContainer.setBackground(new Background(backgroundImage));
     }
 
@@ -113,20 +110,21 @@ public class GameMapServiceImpl implements GameMapService {
         List<MapObject> objectList = ((ObjectGroup) layer).getObjects();
         for (MapObject mapObject : objectList) {
             AbstractGameMapComponent gameMapComponent =
-                    GameMapComponentFactoryProducer.getComponent(layer.getName(), (short) 1);
+                    GameMapComponentFactory.getComponent(mapObject.getType(), (short) 1);
 
             if (null == gameMapComponent) {
                 continue;
             }
 
+            gameMapComponent.setShape(mapObject.getShape());
             gameMapComponent.setName(mapObject.getName());
             gameMapComponent.setAffinity(Short.parseShort(mapObject.getProperties().getProperties().get(0).getValue()));
             gameMapComponent.setId(mapObject.getId());
-            gameMapComponent.setLength(mapObject.getHeight());
-            gameMapComponent.setWidth(mapObject.getWidth());
-//            gameMapComponent.setPositionY(mapObject.getY());
-//            gameMapComponent.setPositionX(mapObject.getX());
-            gameMapComponent.setType(layer.getName());
+            gameMapComponent.setLength(CoordinateUtil.coordinateYConvert(mapObject.getHeight()));
+            gameMapComponent.setWidth(CoordinateUtil.coordinateXConvert(mapObject.getWidth()));
+            gameMapComponent.setStartX(CoordinateUtil.coordinateXConvert(mapObject.getX()));
+            gameMapComponent.setStartY(CoordinateUtil.coordinateYConvert(mapObject.getY()));
+            gameMapComponent.setType(mapObject.getType());
 
             gameMap.addMapComponent(gameMapComponent);
         }

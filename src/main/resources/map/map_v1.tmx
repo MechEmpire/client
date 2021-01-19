@@ -21,25 +21,25 @@
   <image source="spring.png" width="100" height="100"/>
  </imagelayer>
  <objectgroup id="9" name="basecamp">
-  <object id="11" name="basecamp_red" x="64" y="1121" width="95" height="95">
+  <object id="11" name="basecamp_red" type="basecamp" x="64" y="1120" width="95" height="95">
    <properties>
     <property name="affinity" type="int" value="1"/>
    </properties>
   </object>
-  <object id="21" name="basecamp_blue" x="1120" y="65" width="95" height="95">
+  <object id="21" name="basecamp_blue" type="basecamp" x="1120" y="65" width="95" height="95">
    <properties>
     <property name="affinity" type="int" value="-1"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup id="10" name="bunker">
-  <object id="17" name="bunker_2" x="830" y="830" width="222" height="222">
+  <object id="17" name="bunker_2" type="obstacle" x="830" y="830" width="222" height="222">
    <properties>
     <property name="affinity" type="int" value="0"/>
    </properties>
    <ellipse/>
   </object>
-  <object id="18" name="bunker_1" x="222" y="222" width="222" height="222">
+  <object id="18" name="bunker_1" type="obstacle" x="222" y="222" width="222" height="222">
    <properties>
     <property name="affinity" type="int" value="0"/>
    </properties>
