@@ -4,6 +4,7 @@ import com.mechempire.client.config.UIConfig;
 import com.mechempire.client.controller.GamePlayerController;
 import com.mechempire.client.event.StageReadyEvent;
 import com.mechempire.client.factory.SceneFactory;
+import com.mechempire.client.network.MechEmpireClient;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -17,6 +18,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
@@ -28,11 +30,15 @@ import javax.annotation.Resource;
  * @author <tairy> tairyguo@gmail.com
  * @date 2021-01-18 09:40
  */
+@Slf4j
 @Component
 public class PrimaryStageInitializer implements ApplicationListener<StageReadyEvent> {
 
     @Resource
     GamePlayerController gamePlayerController;
+
+    @Resource
+    MechEmpireClient mechEmpireClient;
 
     @Override
     public void onApplicationEvent(StageReadyEvent stageReadyEvent) {
@@ -67,6 +73,14 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
                 Window window = scene.getWindow();
                 Stage stage = (Stage) window;
                 gamePlayerController.show(stage);
+
+                new Thread(() -> {
+                    try {
+                        mechEmpireClient.run();
+                    } catch (Exception e) {
+                        log.error("client run error: {}", e.getMessage(), e);
+                    }
+                }).start();
             }
         });
 

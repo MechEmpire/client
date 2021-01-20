@@ -47,8 +47,15 @@ public class GameClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf byteBuf) throws Exception {
-        log.info("client received message: {}", byteBuf.toString(CharsetUtil.UTF_8));
+//        log.info("client received message: {}", byteBuf.toString(CharsetUtil.UTF_8));
 //        ctx.write(Unpooled.copiedBuffer("come on babe.", CharsetUtil.UTF_8));
+
+        System.out.println("\n======");
+        byte[] bytes = new byte[byteBuf.readableBytes()];
+        byteBuf.readBytes(bytes);
+        for (byte aByte : bytes) {
+            System.out.printf("%02x\t", aByte);
+        }
     }
 
     @Override
