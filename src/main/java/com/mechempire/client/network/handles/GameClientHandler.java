@@ -1,13 +1,11 @@
 package com.mechempire.client.network.handles;
 
 import com.mechempire.client.network.MechEmpireClient;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import com.mechempire.sdk.proto.ResultMessageProto;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -23,11 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public class GameClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
-
-    public GameClientHandler() {
-        super(false);
-    }
+public class GameClientHandler extends ChannelInboundHandlerAdapter {
 
     @Resource
     private MechEmpireClient mechEmpireClient;
@@ -41,20 +35,37 @@ public class GameClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         log.info("channel active, send message to server.");
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Tairy", CharsetUtil.UTF_8)).sync();
-        ctx.flush();
+        ResultMessageProto.CommonData.Builder builder = ResultMessageProto.CommonData.newBuilder();
+        builder.setMessage("Tairy");
+        ctx.writeAndFlush(builder.build());
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf byteBuf) throws Exception {
-//        log.info("client received message: {}", byteBuf.toString(CharsetUtil.UTF_8));
-//        ctx.write(Unpooled.copiedBuffer("come on babe.", CharsetUtil.UTF_8));
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ResultMessageProto.CommonData commonData = (ResultMessageProto.CommonData) msg;
+        if (null == commonData) {
+            return;
+        }
 
-        System.out.println("\n======");
-        byte[] bytes = new byte[byteBuf.readableBytes()];
-        byteBuf.readBytes(bytes);
-        for (byte aByte : bytes) {
-            System.out.printf("%02x\t", aByte);
+        if (commonData.getMessage().equals("pong")) {
+            System.out.println(commonData.getMessage());
+        }
+
+        if (commonData.getData().getValue().isEmpty()) {
+            return;
+        }
+
+        ResultMessageProto.ResultMessageList messageList =
+                commonData.getData().unpack(ResultMessageProto.ResultMessageList.class);
+
+        System.out.println("======");
+        for (int i = 0; i < messageList.getResultMessageCount(); i++) {
+            ResultMessageProto.ResultMessage message = messageList.getResultMessage(i);
+            System.out.printf("component_id: %d, position_x: %f, position_y: %f\n",
+                    message.getComponentId(),
+                    message.getPositionX(),
+                    message.getPositionY()
+            );
         }
     }
 
@@ -101,7 +112,10 @@ public class GameClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
         IdleStateEvent e = (IdleStateEvent) evt;
         if (e.state() == IdleState.READER_IDLE) {
             if (null != ctx.channel() && ctx.channel().isActive()) {
-                ctx.writeAndFlush(Unpooled.copiedBuffer("ping", CharsetUtil.UTF_8)).sync();
+                ResultMessageProto.CommonData.Builder builder =
+                        ResultMessageProto.CommonData.newBuilder();
+                builder.setMessage("ping");
+                ctx.writeAndFlush(builder.build());
             } else {
                 mechEmpireClient.doConnect();
             }
