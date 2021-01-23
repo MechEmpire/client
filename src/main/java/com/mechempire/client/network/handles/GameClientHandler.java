@@ -26,6 +26,8 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
     @Resource
     private MechEmpireClient mechEmpireClient;
 
+    private ResultMessageProto.CommonData.Builder builder = ResultMessageProto.CommonData.newBuilder();
+
     /**
      * 建立连接, 准备进行通信时会调用
      *
@@ -35,8 +37,8 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         log.info("channel active, send message to server.");
-        ResultMessageProto.CommonData.Builder builder = ResultMessageProto.CommonData.newBuilder();
-        builder.setMessage("Tairy");
+        builder = ResultMessageProto.CommonData.newBuilder();
+        builder.setMessage("init");
         ctx.writeAndFlush(builder.build());
     }
 
@@ -47,8 +49,12 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        if (commonData.getMessage().equals("pong")) {
-            System.out.println(commonData.getMessage());
+        System.out.println(commonData.getMessage());
+
+        if (commonData.getMessage().equals("init")) {
+            builder = ResultMessageProto.CommonData.newBuilder();
+            builder.setMessage("start");
+            ctx.writeAndFlush(builder.build());
         }
 
         if (commonData.getData().getValue().isEmpty()) {
@@ -61,7 +67,7 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
         System.out.println("======");
         for (int i = 0; i < messageList.getResultMessageCount(); i++) {
             ResultMessageProto.ResultMessage message = messageList.getResultMessage(i);
-            System.out.printf("component_id: %d, position_x: %f, position_y: %f\n",
+            System.out.printf("component_id: %d, position_x: %.2f, position_y: %.2f\n",
                     message.getComponentId(),
                     message.getPositionX(),
                     message.getPositionY()
@@ -112,8 +118,7 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
         IdleStateEvent e = (IdleStateEvent) evt;
         if (e.state() == IdleState.READER_IDLE) {
             if (null != ctx.channel() && ctx.channel().isActive()) {
-                ResultMessageProto.CommonData.Builder builder =
-                        ResultMessageProto.CommonData.newBuilder();
+                builder = ResultMessageProto.CommonData.newBuilder();
                 builder.setMessage("ping");
                 ctx.writeAndFlush(builder.build());
             } else {
