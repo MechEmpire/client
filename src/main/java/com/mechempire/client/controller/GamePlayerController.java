@@ -36,8 +36,7 @@ public class GamePlayerController extends AbstractController {
             Pane mapContainer = new Pane();
             // map reader
             TMXMapReader mapReader = new TMXMapReader();
-            Map originMap = null;
-            originMap = mapReader.readMap(getClass().getResource("/map/map_v1.tmx").toString());
+            Map originMap = mapReader.readMap(getClass().getResource("/map/map_v1.tmx").toString());
             MapLayer layer = null;
 
             GameMap gameMap = gameMapService.initGameMapObject(originMap);

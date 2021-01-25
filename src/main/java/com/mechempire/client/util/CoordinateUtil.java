@@ -11,11 +11,11 @@ import com.mechempire.client.config.UIConfig;
 public class CoordinateUtil {
 
     public static double coordinateXConvert(double x) {
-        return x * UIConfig.WINDOW_WIDTH / UIConfig.BASE_WINDOW_WIDTH;
+        return x * UIConfig.WINDOW_WIDTH / UIConfig.MAX_WINDOW_WIDTH;
     }
 
 
     public static double coordinateYConvert(double y) {
-        return y * UIConfig.WINDOW_HEIGHT / UIConfig.BASE_WINDOW_HEIGHT;
+        return y * UIConfig.WINDOW_HEIGHT / UIConfig.MAX_WINDOW_HEIGHT;
     }
 }

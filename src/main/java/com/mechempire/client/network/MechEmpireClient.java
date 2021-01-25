@@ -2,7 +2,7 @@ package com.mechempire.client.network;
 
 import com.mechempire.client.constant.ServerConstant;
 import com.mechempire.client.network.handles.GameClientHandler;
-import com.mechempire.sdk.proto.ResultMessageProto;
+import com.mechempire.sdk.proto.CommonDataProto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -53,7 +53,7 @@ public class MechEmpireClient implements IClient {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new IdleStateHandler(20, 20, 20));
                             socketChannel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
-                            socketChannel.pipeline().addLast(new ProtobufDecoder(ResultMessageProto.CommonData.getDefaultInstance()));
+                            socketChannel.pipeline().addLast(new ProtobufDecoder(CommonDataProto.CommonData.getDefaultInstance()));
                             socketChannel.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
                             socketChannel.pipeline().addLast(new GameClientHandler());

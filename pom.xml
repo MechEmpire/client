@@ -18,6 +18,7 @@
 
     <dependencies>
         <dependency>
+            <!-- maven 仓库的这个包有 bug，加载不到地图文件 -->
             <groupId>org.mapeditor</groupId>
             <artifactId>libtiled</artifactId>
             <version>1.2.3</version>

@@ -9,19 +9,23 @@ package com.mechempire.client.config;
 public class UIConfig {
 
 
-    public static final double BASE_WINDOW_WIDTH = 1280;
+    public static final double MAX_WINDOW_WIDTH = 1280;
 
-    public static final double BASE_WINDOW_HEIGHT = 1280;
+    public static final double MAX_WINDOW_HEIGHT = 1280;
 
     /**
      * 客户端窗口宽度
      */
-    public static final double WINDOW_WIDTH = 640;
+    public static double WINDOW_WIDTH = 640;
 
     /**
      * 客户端窗口高度
      */
-    public static final double WINDOW_HEIGHT = 640;
+    public static double WINDOW_HEIGHT = 640;
+
+    public static double SCREEN_WIDTH = 0;
+
+    public static double SCREEN_HEIGHT = 0;
 
     /**
      * 窗口顶部 bar 高度
