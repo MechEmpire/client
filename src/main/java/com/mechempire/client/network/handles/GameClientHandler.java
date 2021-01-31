@@ -28,6 +28,9 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
     @Resource
     private MechEmpireClient mechEmpireClient;
 
+    @Resource
+    private UIConfig uiConfig;
+
     private CommonDataProto.CommonData.Builder builder = CommonDataProto.CommonData.newBuilder();
 
     /**
@@ -43,8 +46,8 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
         builder.setMessage("init");
 
         CommonDataProto.InitRequest.Builder initRequestBuild = CommonDataProto.InitRequest.newBuilder();
-        initRequestBuild.setScreenHeight(UIConfig.SCREEN_HEIGHT);
-        initRequestBuild.setScreenWidth(UIConfig.SCREEN_WIDTH);
+        initRequestBuild.setScreenHeight(uiConfig.getScreenHeight());
+        initRequestBuild.setScreenWidth(uiConfig.getScreenWidth());
         builder.setData(Any.pack(initRequestBuild.build()));
         ctx.writeAndFlush(builder.build());
         builder.clear();

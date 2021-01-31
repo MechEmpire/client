@@ -1,7 +1,7 @@
 package com.mechempire.client.service.impl;
 
+import com.mechempire.client.config.UIConfig;
 import com.mechempire.client.service.GameMapService;
-import com.mechempire.client.util.CoordinateUtil;
 import com.mechempire.client.util.ImageUtil;
 import com.mechempire.sdk.core.factory.GameMapComponentFactory;
 import com.mechempire.sdk.core.game.AbstractGameMapComponent;
@@ -12,6 +12,7 @@ import javafx.scene.layout.*;
 import org.mapeditor.core.*;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,14 +25,17 @@ import java.util.List;
 @Service("GameMapService")
 public class GameMapServiceImpl implements GameMapService {
 
+    @Resource
+    private UIConfig uiConfig;
+
     @Override
     public void initGameMapBackground(MapLayer layer, Pane mapContainer) {
         ImageData backgroundImageData = ((ImageLayer) layer).getImage();
         BackgroundImage backgroundImage = new BackgroundImage(
                 new Image(
                         backgroundImageData.getSource(),
-                        CoordinateUtil.coordinateXConvert(backgroundImageData.getWidth()),
-                        CoordinateUtil.coordinateYConvert(backgroundImageData.getHeight()),
+                        uiConfig.coordinateXConvert(backgroundImageData.getWidth()),
+                        uiConfig.coordinateYConvert(backgroundImageData.getHeight()),
                         false,
                         true
                 ),
@@ -48,15 +52,15 @@ public class GameMapServiceImpl implements GameMapService {
         ImageData imageData = ((ImageLayer) layer).getImage();
         Image image = new Image(imageData.getSource());
         ImageView view = new ImageView(image);
-        view.setX(CoordinateUtil.coordinateXConvert(layer.getOffsetX()));
-        view.setY(CoordinateUtil.coordinateYConvert(layer.getOffsetY()));
-        view.setFitWidth(CoordinateUtil.coordinateXConvert(imageData.getWidth()));
-        view.setFitHeight(CoordinateUtil.coordinateYConvert(imageData.getHeight()));
+        view.setX(uiConfig.coordinateXConvert(layer.getOffsetX()));
+        view.setY(uiConfig.coordinateYConvert(layer.getOffsetY()));
+        view.setFitWidth(uiConfig.coordinateXConvert(imageData.getWidth()));
+        view.setFitHeight(uiConfig.coordinateYConvert(imageData.getHeight()));
         if (null != layer.getOpacity()) {
             view.setOpacity(layer.getOpacity());
         }
-        mapContainer.setPrefHeight(CoordinateUtil.coordinateYConvert(image.getHeight()));
-        mapContainer.setPrefWidth(CoordinateUtil.coordinateXConvert(image.getWidth()));
+        mapContainer.setPrefHeight(uiConfig.coordinateYConvert(image.getHeight()));
+        mapContainer.setPrefWidth(uiConfig.coordinateXConvert(image.getWidth()));
         mapContainer.getChildren().add(view);
     }
 
@@ -87,8 +91,8 @@ public class GameMapServiceImpl implements GameMapService {
                 }
 
                 ImageView imageView = new ImageView(tileImage);
-                imageView.setTranslateX(x * CoordinateUtil.coordinateXConvert(tileWidth));
-                imageView.setTranslateY(y * CoordinateUtil.coordinateYConvert(tileHeight));
+                imageView.setTranslateX(x * uiConfig.coordinateXConvert(tileWidth));
+                imageView.setTranslateY(y * uiConfig.coordinateYConvert(tileHeight));
                 mapContainer.getChildren().add(imageView);
             }
         }
@@ -120,10 +124,10 @@ public class GameMapServiceImpl implements GameMapService {
             gameMapComponent.setName(mapObject.getName());
             gameMapComponent.setAffinity(Short.parseShort(mapObject.getProperties().getProperties().get(0).getValue()));
             gameMapComponent.setId(mapObject.getId());
-            gameMapComponent.setLength(CoordinateUtil.coordinateYConvert(mapObject.getHeight()));
-            gameMapComponent.setWidth(CoordinateUtil.coordinateXConvert(mapObject.getWidth()));
-            gameMapComponent.setStartX(CoordinateUtil.coordinateXConvert(mapObject.getX()));
-            gameMapComponent.setStartY(CoordinateUtil.coordinateYConvert(mapObject.getY()));
+            gameMapComponent.setLength(uiConfig.coordinateYConvert(mapObject.getHeight()));
+            gameMapComponent.setWidth(uiConfig.coordinateXConvert(mapObject.getWidth()));
+            gameMapComponent.setStartX(uiConfig.coordinateXConvert(mapObject.getX()));
+            gameMapComponent.setStartY(uiConfig.coordinateYConvert(mapObject.getY()));
             gameMapComponent.setType(mapObject.getType());
 
             gameMap.addMapComponent(gameMapComponent);

@@ -1,7 +1,6 @@
 package com.mechempire.client.controller;
 
 import com.mechempire.client.config.UIConfig;
-import com.mechempire.client.factory.SceneFactory;
 import com.mechempire.client.service.GameMapService;
 import com.mechempire.sdk.runtime.GameMap;
 import javafx.scene.Scene;
@@ -30,6 +29,9 @@ public class GamePlayerController extends AbstractController {
     @Resource
     private GameMapService gameMapService;
 
+    @Resource
+    private UIConfig uiConfig;
+
     @Override
     public void show(Stage stage) {
         try {
@@ -54,7 +56,7 @@ public class GamePlayerController extends AbstractController {
                     gameMapService.initGameMapComponent(layer, gameMap);
                 }
             }
-            SceneFactory.initCommonStage(stage);
+            uiConfig.initCommonStage(stage);
 
 //            HashMap<Integer, AbstractGameMapComponent> components = gameMap.getComponents();
 //            components.forEach((k, v) -> {
@@ -79,7 +81,7 @@ public class GamePlayerController extends AbstractController {
 //                }
 //            });
 
-            stage.setScene(new Scene(mapContainer, UIConfig.WINDOW_WIDTH, UIConfig.WINDOW_HEIGHT));
+            stage.setScene(new Scene(mapContainer, uiConfig.getWindowWidth(), uiConfig.getWindowHeight()));
             stage.show();
         } catch (Exception e) {
             log.error("init map error: {}", e.getMessage(), e);

@@ -3,7 +3,6 @@ package com.mechempire.client.initializer;
 import com.mechempire.client.config.UIConfig;
 import com.mechempire.client.controller.GamePlayerController;
 import com.mechempire.client.event.StageReadyEvent;
-import com.mechempire.client.factory.SceneFactory;
 import com.mechempire.client.network.MechEmpireClient;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -40,19 +39,22 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
     @Resource
     MechEmpireClient mechEmpireClient;
 
+    @Resource
+    UIConfig uiConfig;
+
     @Override
     public void onApplicationEvent(StageReadyEvent stageReadyEvent) {
         Stage primaryStage = stageReadyEvent.stage;
-        SceneFactory.initCommonStage(primaryStage);
+        uiConfig.initCommonStage(primaryStage);
 
         Pane root = new Pane();
         root.setStyle(UIConfig.MAIN_SCENE_BACKGROUND);
         Image image = new Image(getClass().getResourceAsStream("/logo.png"));
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(UIConfig.MAIN_LOGO_FIT_WIDTH);
-        imageView.setFitHeight(UIConfig.MAIN_LOGO_FIT_HEIGHT);
-        imageView.setX(UIConfig.MAIN_LOGO_X);
-        imageView.setY(UIConfig.MAIN_LOGO_Y);
+        imageView.setFitWidth(uiConfig.getMainLogoFitWidth());
+        imageView.setFitHeight(uiConfig.getMainLogoFitHeight());
+        imageView.setX(uiConfig.getMainLogoX());
+        imageView.setY(uiConfig.getMainLogoY());
 
         Button button = new Button("立即对战");
         button.setStyle(UIConfig.START_BTN_STYLE);
@@ -60,12 +62,12 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
         button.setTextFill(Paint.valueOf("#f1ce76"));
         button.setAlignment(Pos.CENTER);
         button.setCancelButton(true);
-        button.setPrefHeight(UIConfig.START_BTN_PREF_HEIGHT);
-        button.setPrefWidth(UIConfig.START_BTN_PREF_WIGHT);
-        button.setLayoutX(UIConfig.START_BTN_X);
-        button.setLayoutY(UIConfig.START_BTN_Y);
+        button.setPrefHeight(uiConfig.getStartBtnPrefHeight());
+        button.setPrefWidth(uiConfig.getStartBtnPrefWidth());
+        button.setLayoutX(uiConfig.getStartBtnX());
+        button.setLayoutY(uiConfig.getStartBtnY());
         button.setMnemonicParsing(false);
-        button.setFont(new Font(UIConfig.START_BTN_FONT_SIZE));
+        button.setFont(new Font(uiConfig.getStartBtnFontSize()));
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -85,7 +87,7 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
         });
 
         root.getChildren().addAll(imageView, button);
-        primaryStage.setScene(new Scene(root, UIConfig.WINDOW_WIDTH, UIConfig.WINDOW_HEIGHT));
+        primaryStage.setScene(new Scene(root, uiConfig.getWindowWidth(), uiConfig.getWindowHeight()));
         primaryStage.show();
     }
 }

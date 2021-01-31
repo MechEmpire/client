@@ -1,8 +1,6 @@
 package com.mechempire.client.player;
 
-import com.mechempire.client.factory.SceneFactory;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;

@@ -37,15 +37,6 @@ public class ClientApplication extends Application {
     public void init() throws Exception {
         ctx.scan("com.mechempire");
         ctx.refresh();
-
-        Rectangle2D screen = Screen.getPrimary().getBounds();
-        UIConfig.SCREEN_WIDTH = screen.getWidth();
-        UIConfig.SCREEN_HEIGHT = screen.getHeight();
-
-        if (UIConfig.SCREEN_HEIGHT <= 900) {
-            UIConfig.WINDOW_WIDTH = 640;
-            UIConfig.WINDOW_HEIGHT = 640;
-        }
     }
 
     @Override
