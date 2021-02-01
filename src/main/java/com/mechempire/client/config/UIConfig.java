@@ -92,7 +92,7 @@ public class UIConfig {
         this.screenWidth = screen.getWidth();
         this.screenHeight = screen.getHeight();
 
-        if (this.screenWidth <= 900) {
+        if (this.screenWidth <= 1440) {
             this.windowWidth = 640;
             this.windowHeight = 640;
         } else {
