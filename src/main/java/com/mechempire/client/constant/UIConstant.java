@@ -29,11 +29,6 @@ public class UIConstant {
     public static final String WINDOW_TITLE = "MechEmpire - 机甲帝国";
 
     /**
-     * 主页面背景样式
-     */
-    public static final String MAIN_SCENE_BACKGROUND = "-fx-background-image: url('background.jpg'); -fx-background-repeat: stretch; -fx-background-position: center center; -fx-background-size: 100% 100%; -fx-effect: dropshadow(three-pass-box, black, 30, 0.5, 0, 0);";
-
-    /**
      * 开始按钮样式
      */
     public static final String START_BTN_STYLE = "-fx-background-color: linear-gradient(to top,#000000,#525252);";

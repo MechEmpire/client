@@ -30,7 +30,11 @@ public class HomeView extends AbstractView {
 
     public HomeView(UIConfig uiConfig) {
         root = new Pane();
-        root.setStyle(UIConstant.MAIN_SCENE_BACKGROUND);
+
+        Image backgroundImage = new Image(getClass().getResourceAsStream("/background.jpg"));
+        ImageView backgroundImageView = new ImageView(backgroundImage);
+        backgroundImageView.setFitWidth(uiConfig.getWindowWidth());
+        backgroundImageView.setFitHeight(uiConfig.getWindowHeight());
 
         Image image = new Image(getClass().getResourceAsStream("/logo.png"));
         ImageView imageView = new ImageView(image);
@@ -70,6 +74,7 @@ public class HomeView extends AbstractView {
             }
         });
 
-        root.getChildren().addAll(imageView, button);
+        root.getChildren().addAll(backgroundImageView, imageView, button);
+        makeScaleTransition(backgroundImageView, 10000, 0.25, 0.25);
     }
 }

@@ -23,6 +23,7 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
 
     @Override
     public void onApplicationEvent(StageReadyEvent stageReadyEvent) {
+        render.setStage(stageReadyEvent.stage);
         render.home();
     }
 }
