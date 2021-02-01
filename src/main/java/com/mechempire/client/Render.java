@@ -27,7 +27,7 @@ import java.util.HashMap;
 @Slf4j
 @Component
 public class Render {
-    
+
     @Resource
     private UIConfig uiConfig;
 
@@ -55,11 +55,11 @@ public class Render {
     }
 
     public void init(Scene scene) {
-        stage.setScene(scene);
-        stage.setWidth(uiConfig.getWindowWidth());
-        stage.setHeight(uiConfig.getWindowHeight());
-        stage.setTitle(UIConstant.WINDOW_TITLE);
-        stage.show();
+//        stage.setScene(scene);
+//        stage.setWidth(uiConfig.getWindowWidth());
+//        stage.setHeight(uiConfig.getWindowHeight());
+//        stage.setTitle(UIConstant.WINDOW_TITLE);
+//        stage.show();
     }
 
     /**
