@@ -18,8 +18,6 @@ import javafx.stage.Window;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-
 /**
  * package: com.mechempire.client.view
  *
@@ -30,50 +28,48 @@ import javax.annotation.Resource;
 @Component
 public class HomeView extends AbstractView {
 
-    @Resource
-    private UIConfig uiConfig;
-
-    public HomeView() {
+    public HomeView(UIConfig uiConfig) {
         root = new Pane();
         root.setStyle(UIConstant.MAIN_SCENE_BACKGROUND);
-//        Image image = new Image(getClass().getResourceAsStream("/logo.png"));
-//        ImageView imageView = new ImageView(image);
-//        imageView.setFitWidth(uiConfig.getMainLogoFitWidth());
-//        imageView.setFitHeight(uiConfig.getMainLogoFitHeight());
-//        imageView.setX(uiConfig.getMainLogoX());
-//        imageView.setY(uiConfig.getMainLogoY());
+
+        Image image = new Image(getClass().getResourceAsStream("/logo.png"));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(uiConfig.getMainLogoFitWidth());
+        imageView.setFitHeight(uiConfig.getMainLogoFitHeight());
+        imageView.setX(uiConfig.getMainLogoX());
+        imageView.setY(uiConfig.getMainLogoY());
+
+        Button button = new Button("立即对战");
+        button.setStyle(UIConstant.START_BTN_STYLE);
+        button.setTextAlignment(TextAlignment.CENTER);
+        button.setTextFill(Paint.valueOf("#f1ce76"));
+        button.setAlignment(Pos.CENTER);
+        button.setCancelButton(true);
+        button.setPrefHeight(uiConfig.getStartBtnPrefHeight());
+        button.setPrefWidth(uiConfig.getStartBtnPrefWidth());
+        button.setLayoutX(uiConfig.getStartBtnX());
+        button.setLayoutY(uiConfig.getStartBtnY());
+        button.setMnemonicParsing(false);
+        button.setFont(new Font(uiConfig.getStartBtnFontSize()));
+        button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Scene scene = ((Button) actionEvent.getSource()).getScene();
+                Window window = scene.getWindow();
+                Stage stage = (Stage) window;
+//                gamePlayerController.show(stage);
 //
-//        Button button = new Button("立即对战");
-//        button.setStyle(UIConstant.START_BTN_STYLE);
-//        button.setTextAlignment(TextAlignment.CENTER);
-//        button.setTextFill(Paint.valueOf("#f1ce76"));
-//        button.setAlignment(Pos.CENTER);
-//        button.setCancelButton(true);
-//        button.setPrefHeight(uiConfig.getStartBtnPrefHeight());
-//        button.setPrefWidth(uiConfig.getStartBtnPrefWidth());
-//        button.setLayoutX(uiConfig.getStartBtnX());
-//        button.setLayoutY(uiConfig.getStartBtnY());
-//        button.setMnemonicParsing(false);
-//        button.setFont(new Font(uiConfig.getStartBtnFontSize()));
-//        button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent actionEvent) {
-//                Scene scene = ((Button) actionEvent.getSource()).getScene();
-//                Window window = scene.getWindow();
-//                Stage stage = (Stage) window;
-////                gamePlayerController.show(stage);
-////
-////                // 连接服务器, 同步数据
-////                new Thread(() -> {
-////                    try {
-////                        mechEmpireClient.run();
-////                    } catch (Exception e) {
-////                        log.error("client run error: {}", e.getMessage(), e);
-////                    }
-////                }).start();
-//            }
-//        });
-//
-//        root.getChildren().addAll(imageView, button);
+//                // 连接服务器, 同步数据
+//                new Thread(() -> {
+//                    try {
+//                        mechEmpireClient.run();
+//                    } catch (Exception e) {
+//                        log.error("client run error: {}", e.getMessage(), e);
+//                    }
+//                }).start();
+            }
+        });
+
+        root.getChildren().addAll(imageView, button);
     }
 }

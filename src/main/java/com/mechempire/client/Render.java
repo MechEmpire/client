@@ -3,6 +3,7 @@ package com.mechempire.client;
 import com.mechempire.client.config.UIConfig;
 import com.mechempire.client.constant.UIConstant;
 import com.mechempire.client.view.AbstractView;
+import com.mechempire.client.view.HomeView;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -39,6 +40,9 @@ public class Render {
     @Getter
     private Stage stage;
 
+    @Resource
+    private HomeView homeView;
+
     /**
      * 初始化渲染器
      */
@@ -55,11 +59,18 @@ public class Render {
     }
 
     public void init(Scene scene) {
-//        stage.setScene(scene);
-//        stage.setWidth(uiConfig.getWindowWidth());
-//        stage.setHeight(uiConfig.getWindowHeight());
-//        stage.setTitle(UIConstant.WINDOW_TITLE);
-//        stage.show();
+        stage.setScene(scene);
+        stage.setWidth(uiConfig.getWindowWidth());
+        stage.setHeight(uiConfig.getWindowHeight());
+        stage.setTitle(UIConstant.WINDOW_TITLE);
+        stage.show();
+    }
+
+    /**
+     * 显示首页
+     */
+    public void home() {
+        init(homeView);
     }
 
     /**

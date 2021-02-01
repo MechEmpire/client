@@ -38,6 +38,7 @@ public class ClientApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        ctx.getBean(Render.class).setStage(primaryStage);
         ctx.publishEvent(new StageReadyEvent(primaryStage));
     }
 
