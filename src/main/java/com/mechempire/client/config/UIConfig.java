@@ -142,6 +142,6 @@ public class UIConfig {
         stage.setMinHeight(this.windowHeight + UIConstant.WINDOW_BAR_HEIGHT);
         stage.setMaxWidth(this.windowWidth);
         stage.setMaxHeight(this.windowHeight + UIConstant.WINDOW_BAR_HEIGHT);
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/image/logo.png")));
     }
 }

@@ -2,6 +2,7 @@ package com.mechempire.client.view;
 
 import com.mechempire.client.config.UIConfig;
 import com.mechempire.client.constant.UIConstant;
+import com.mechempire.client.manager.ResourceManager;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -28,15 +29,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class HomeView extends AbstractView {
 
-    public HomeView(UIConfig uiConfig) {
+//    @Resource
+//    private ResourceManager resourceManager;
+
+    public HomeView(UIConfig uiConfig, ResourceManager resourceManager) {
         root = new Pane();
 
-        Image backgroundImage = new Image(getClass().getResourceAsStream("/background.jpg"));
+//        Image backgroundImage = new Image(getClass().getResourceAsStream("/image/background.jpg"));
+        Image backgroundImage = resourceManager.getImage("background.jpg");
         ImageView backgroundImageView = new ImageView(backgroundImage);
         backgroundImageView.setFitWidth(uiConfig.getWindowWidth());
         backgroundImageView.setFitHeight(uiConfig.getWindowHeight());
 
-        Image image = new Image(getClass().getResourceAsStream("/logo.png"));
+        Image image = new Image(getClass().getResourceAsStream("/image/logo.png"));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(uiConfig.getMainLogoFitWidth());
         imageView.setFitHeight(uiConfig.getMainLogoFitHeight());
