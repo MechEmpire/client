@@ -1,11 +1,8 @@
 package com.mechempire.client;
 
-import com.mechempire.client.config.UIConfig;
 import com.mechempire.client.event.StageReadyEvent;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

@@ -1,5 +1,6 @@
 package com.mechempire.client.config;
 
+import com.mechempire.client.constant.UIConstant;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
@@ -18,36 +19,6 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 public class UIConfig {
-    /**
-     * 最大窗口宽度, 用于坐标计算的 base 值
-     */
-    public static final double MAX_WINDOW_WIDTH = 1280;
-
-    /**
-     * 最大窗口高度, 用于坐标计算的 base 值
-     */
-    public static final double MAX_WINDOW_HEIGHT = 1280;
-
-    /**
-     * 窗口顶部 bar 高度
-     */
-    public static final double WINDOW_BAR_HEIGHT = 20;
-
-    /**
-     * 客户端窗口标题
-     */
-    public static final String WINDOW_TITLE = "MechEmpire - 机甲帝国";
-
-    /**
-     * 主页面背景样式
-     */
-    public static final String MAIN_SCENE_BACKGROUND = "-fx-background-image: url('background.jpg'); -fx-background-repeat: stretch; -fx-background-position: center center; -fx-background-size: 100% 100%; -fx-effect: dropshadow(three-pass-box, black, 30, 0.5, 0, 0);";
-
-    /**
-     * 开始按钮样式
-     */
-    public static final String START_BTN_STYLE = "-fx-background-color: linear-gradient(to top,#000000,#525252);";
-
     /**
      * 窗口宽度
      */
@@ -147,7 +118,7 @@ public class UIConfig {
      * @return new x
      */
     public double coordinateXConvert(double x) {
-        return x * this.windowWidth / MAX_WINDOW_WIDTH;
+        return x * this.windowWidth / UIConstant.MAX_WINDOW_WIDTH;
     }
 
     /**
@@ -157,7 +128,7 @@ public class UIConfig {
      * @return new y
      */
     public double coordinateYConvert(double y) {
-        return y * this.windowHeight / MAX_WINDOW_HEIGHT;
+        return y * this.windowHeight / UIConstant.MAX_WINDOW_HEIGHT;
     }
 
     /**
@@ -166,11 +137,11 @@ public class UIConfig {
      * @param stage stage
      */
     public void initCommonStage(Stage stage) {
-        stage.setTitle(WINDOW_TITLE);
+        stage.setTitle(UIConstant.WINDOW_TITLE);
         stage.setMinWidth(this.windowWidth);
-        stage.setMinHeight(this.windowHeight + WINDOW_BAR_HEIGHT);
+        stage.setMinHeight(this.windowHeight + UIConstant.WINDOW_BAR_HEIGHT);
         stage.setMaxWidth(this.windowWidth);
-        stage.setMaxHeight(this.windowHeight + WINDOW_BAR_HEIGHT);
+        stage.setMaxHeight(this.windowHeight + UIConstant.WINDOW_BAR_HEIGHT);
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
     }
 }
