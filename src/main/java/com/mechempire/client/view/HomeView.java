@@ -41,7 +41,7 @@ public class HomeView extends AbstractView {
         backgroundImageView.setFitWidth(uiConfig.getWindowWidth());
         backgroundImageView.setFitHeight(uiConfig.getWindowHeight());
 
-        Image image = new Image(getClass().getResourceAsStream("/image/logo.png"));
+        Image image = new Image(getClass().getResourceAsStream("/images/logo.png"));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(uiConfig.getMainLogoFitWidth());
         imageView.setFitHeight(uiConfig.getMainLogoFitHeight());

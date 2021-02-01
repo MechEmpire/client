@@ -25,15 +25,15 @@ import java.util.jar.JarFile;
 @Component
 public class ResourceManager {
 
-    private HashMap<String, String> fonts = new HashMap<>(16);
+    private final HashMap<String, String> fonts = new HashMap<>(16);
 
-    private HashMap<String, String> images = new HashMap<>(16);
+    private final HashMap<String, String> images = new HashMap<>(16);
 
-    private HashMap<String, String> medias = new HashMap<>(16);
+    private final HashMap<String, String> medias = new HashMap<>(16);
 
     private boolean inJar = false;
 
-    private String jarPath;
+    private final String jarPath;
 
     public ResourceManager() {
         jarPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -44,6 +44,9 @@ public class ResourceManager {
             inJar = false;
             log.info("running not in jar.");
         }
+
+        loadResource("images", images);
+        loadResource("medias", medias);
     }
 
     /**
