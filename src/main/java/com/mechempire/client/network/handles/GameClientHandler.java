@@ -1,13 +1,17 @@
 package com.mechempire.client.network.handles;
 
 import com.google.protobuf.Any;
-import com.mechempire.client.config.UIConfig;
+import com.mechempire.client.manager.UIManager;
 import com.mechempire.client.network.MechEmpireClient;
+import com.mechempire.sdk.core.component.DestroyerVehicle;
 import com.mechempire.sdk.proto.CommonDataProto;
+import com.mechempire.sdk.runtime.GameMap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +33,10 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
     private MechEmpireClient mechEmpireClient;
 
     @Resource
-    private UIConfig uiConfig;
+    private UIManager uiManager;
+
+    @Resource
+    private GameMap gameMap;
 
     private CommonDataProto.CommonData.Builder builder = CommonDataProto.CommonData.newBuilder();
 
@@ -46,8 +53,8 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
         builder.setMessage("init");
 
         CommonDataProto.InitRequest.Builder initRequestBuild = CommonDataProto.InitRequest.newBuilder();
-        initRequestBuild.setScreenHeight(uiConfig.getScreenHeight());
-        initRequestBuild.setScreenWidth(uiConfig.getScreenWidth());
+        initRequestBuild.setScreenHeight(uiManager.getScreenHeight());
+        initRequestBuild.setScreenWidth(uiManager.getScreenWidth());
         builder.setData(Any.pack(initRequestBuild.build()));
         ctx.writeAndFlush(builder.build());
         builder.clear();
@@ -76,15 +83,27 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
         CommonDataProto.ResultMessageList messageList =
                 commonData.getData().unpack(CommonDataProto.ResultMessageList.class);
 
+        DestroyerVehicle destroyerVehicle = (DestroyerVehicle) gameMap.getMapComponent(111);
+
         System.out.println("======");
         for (int i = 0; i < messageList.getResultMessageCount(); i++) {
             CommonDataProto.ResultMessage message = messageList.getResultMessage(i);
+            Shape shape = destroyerVehicle.getShape();
+//            shape.setLayoutX(message.getPositionX());
+//            shape.setLayoutY(message.getPositionY());
+            if (shape instanceof Rectangle) {
+                Rectangle rectangle = (Rectangle) shape;
+                rectangle.setX(message.getPositionX());
+                rectangle.setY(message.getPositionY());
+            }
+
             System.out.printf("component_id: %d, position_x: %.2f, position_y: %.2f\n",
                     message.getComponentId(),
                     message.getPositionX(),
                     message.getPositionY()
             );
         }
+        System.out.println("======");
     }
 
     @Override

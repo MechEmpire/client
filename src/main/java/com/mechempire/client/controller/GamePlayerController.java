@@ -1,18 +1,16 @@
 package com.mechempire.client.controller;
 
-import com.mechempire.client.config.UIConfig;
+import com.mechempire.client.manager.UIManager;
 import com.mechempire.client.service.GameMapService;
+import com.mechempire.client.view.GamePlayerView;
+import com.mechempire.sdk.core.component.DestroyerVehicle;
 import com.mechempire.sdk.runtime.GameMap;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import org.mapeditor.core.ImageLayer;
-import org.mapeditor.core.Map;
-import org.mapeditor.core.MapLayer;
-import org.mapeditor.core.ObjectGroup;
-import org.mapeditor.io.TMXMapReader;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 
@@ -22,69 +20,55 @@ import javax.annotation.Resource;
  * @author <tairy> tairyguo@gmail.com
  * @date 2020/12/12 下午8:27
  */
-@Component
+@Lazy
 @Slf4j
+@Controller
 public class GamePlayerController extends AbstractController {
 
     @Resource
     private GameMapService gameMapService;
 
     @Resource
-    private UIConfig uiConfig;
+    private UIManager uiManager;
+
+    @Resource
+    private GameMap gameMap;
+
+    @Resource
+    private GamePlayerView gamePlayerView;
 
     @Override
     public void show(Stage stage) {
-        try {
-            Pane mapContainer = new Pane();
-            // map reader
-            TMXMapReader mapReader = new TMXMapReader();
-            Map originMap = mapReader.readMap(getClass().getResource("/map/map_v1.tmx").toString());
-            MapLayer layer = null;
+        // 增加一个毁灭者载具
+        DestroyerVehicle destroyerVehicle = new DestroyerVehicle();
+        destroyerVehicle.setId(111);
+        Rectangle rectangle = new Rectangle(destroyerVehicle.getStartX(), destroyerVehicle.getStartY(),
+                destroyerVehicle.getWidth(), destroyerVehicle.getLength());
+        rectangle.setFill(Paint.valueOf("#ffffff"));
+        destroyerVehicle.setShape(rectangle);
+        gameMap.addMapComponent(destroyerVehicle);
 
-            GameMap gameMap = gameMapService.initGameMapObject(originMap);
+        gamePlayerView.setStage(stage);
+        gamePlayerView.render();
 
-            for (int i = 0; i < originMap.getLayerCount(); i++) {
-                layer = originMap.getLayer(i);
+//        gameMapService.getGameMap().getComponents();
 
-                if (layer instanceof ImageLayer) {
-                    if (layer.getName().equals("background")) {
-                        gameMapService.initGameMapBackground(layer, mapContainer);
-                    } else {
-                        gameMapService.initGameMapTile(layer, mapContainer);
-                    }
-                } else if (layer instanceof ObjectGroup) {
-                    gameMapService.initGameMapComponent(layer, gameMap);
-                }
-            }
-            uiConfig.initCommonStage(stage);
+//        AbstractGameMapComponent sprite = GameMapComponentFactory.createComponent();
 
-//            HashMap<Integer, AbstractGameMapComponent> components = gameMap.getComponents();
-//            components.forEach((k, v) -> {
-//                AbstractGameMapComponent component = gameMap.getMapComponent(v.getId());
-//
-//                if (v.getShape() instanceof Rectangle2D) {
-//                    Rectangle rectangle = new Rectangle();
-//                    rectangle.setX(component.getStartX());
-//                    rectangle.setY(component.getStartY());
-//                    rectangle.setWidth(component.getWidth());
-//                    rectangle.setHeight(component.getLength());
-//                    rectangle.setFill(Paint.valueOf("#ffffff"));
-//                    mapContainer.getChildren().add(rectangle);
-//                } else if (v.getShape() instanceof Ellipse2D) {
-//                    Ellipse ellipse = new Ellipse();
-//                    ellipse.setCenterX(component.getStartX() + component.getWidth() / 2.0);
-//                    ellipse.setCenterY(component.getStartY() + component.getLength() / 2.0);
-//                    ellipse.setRadiusX(component.getWidth() / 2.0);
-//                    ellipse.setRadiusY(component.getLength() / 2.0);
-//                    ellipse.setFill(Paint.valueOf("#ffffff"));
-//                    mapContainer.getChildren().add(ellipse);
-//                }
-//            });
 
-            stage.setScene(new Scene(mapContainer, uiConfig.getWindowWidth(), uiConfig.getWindowHeight()));
-            stage.show();
-        } catch (Exception e) {
-            log.error("init map error: {}", e.getMessage(), e);
-        }
+//        gameMapService.getGameMap().add
+
+        // 17
+        //
+//        DefaultObstacle defaultObstacle = (DefaultObstacle) gameMapService.getGameMap().getMapComponent(17);
+//        log.info("obstacle: {}", defaultObstacle.getName());
+
+
+//        log.info("game_map: {}", gameMapService.getGameMap().getComponents());
+
+        // main loop
+
+        // pull data
+        // update ui
     }
 }

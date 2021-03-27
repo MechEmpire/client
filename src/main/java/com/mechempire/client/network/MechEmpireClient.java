@@ -14,8 +14,10 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,6 +28,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * 客户端入口类
  */
+@Lazy
 @Slf4j
 @Component
 public class MechEmpireClient implements IClient {
@@ -38,6 +41,9 @@ public class MechEmpireClient implements IClient {
     private Channel channel;
 
     private Bootstrap clientBootstrap;
+
+    @Resource
+    private GameClientHandler gameClientHandler;
 
     @Override
     public void run() throws Exception {
@@ -56,7 +62,7 @@ public class MechEmpireClient implements IClient {
                             socketChannel.pipeline().addLast(new ProtobufDecoder(CommonDataProto.CommonData.getDefaultInstance()));
                             socketChannel.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
-                            socketChannel.pipeline().addLast(new GameClientHandler());
+                            socketChannel.pipeline().addLast(gameClientHandler);
                         }
                     });
 

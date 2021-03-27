@@ -6,8 +6,10 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import lombok.Data;
+import lombok.Setter;
 
 /**
  * package: com.mechempire.client.view
@@ -19,6 +21,11 @@ import lombok.Data;
 abstract public class AbstractView {
 
     protected Pane root;
+
+    @Setter
+    protected Stage stage;
+
+    public abstract void render();
 
     public static void makeFadeTransition(Node node, int millis, double fromValue, double toValue) {
         FadeTransition ft = new FadeTransition(Duration.millis(millis));

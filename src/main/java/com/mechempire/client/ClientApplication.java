@@ -1,6 +1,6 @@
 package com.mechempire.client;
 
-import com.mechempire.client.event.StageReadyEvent;
+import com.mechempire.client.controller.HomeController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -38,7 +38,9 @@ public class ClientApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        ctx.publishEvent(new StageReadyEvent(primaryStage));
+        // render home page
+        HomeController homeController = ctx.getBean(HomeController.class);
+        homeController.show(primaryStage);
     }
 
     @Override

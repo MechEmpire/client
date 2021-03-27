@@ -1,4 +1,4 @@
-package com.mechempire.client.config;
+package com.mechempire.client.manager;
 
 import com.mechempire.client.constant.UIConstant;
 import javafx.geometry.Rectangle2D;
@@ -6,6 +6,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,8 +19,10 @@ import org.springframework.stereotype.Component;
  * UI 相关参数处理类
  */
 @Data
+@Lazy
+@Slf4j
 @Component
-public class UIConfig {
+public class UIManager {
     /**
      * 窗口宽度
      */
@@ -87,7 +91,7 @@ public class UIConfig {
     /**
      * construct
      */
-    public UIConfig() {
+    public UIManager() {
         Rectangle2D screen = Screen.getPrimary().getBounds();
         this.screenWidth = screen.getWidth();
         this.screenHeight = screen.getHeight();
@@ -109,6 +113,8 @@ public class UIConfig {
         this.startBtnX = windowWidth * 0.4;
         this.startBtnY = windowHeight * 0.7;
         this.startBtnFontSize = windowWidth * 0.025;
+
+        log.info("init UIManager...");
     }
 
     /**

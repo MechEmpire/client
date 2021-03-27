@@ -1,10 +1,12 @@
 package com.mechempire.client.manager;
 
+import com.google.common.collect.Maps;
 import com.mechempire.client.util.PathExUtil;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.text.Font;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -12,6 +14,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -20,16 +23,28 @@ import java.util.jar.JarFile;
  *
  * @author <tairy> tairyguo@gmail.com
  * @date 2021/1/31 下午8:51
+ * <p>
+ * 资源管理器
  */
+@Lazy
 @Slf4j
 @Component
 public class ResourceManager {
 
-    private final HashMap<String, String> fonts = new HashMap<>(16);
+    /**
+     * 字体资源
+     */
+    private final HashMap<String, String> fonts = Maps.newHashMap();
 
-    private final HashMap<String, String> images = new HashMap<>(16);
+    /**
+     * 图片资源
+     */
+    private final HashMap<String, String> images = Maps.newHashMap();
 
-    private final HashMap<String, String> medias = new HashMap<>(16);
+    /**
+     * 媒体资源
+     */
+    private final HashMap<String, String> medias = Maps.newHashMap();
 
     private boolean inJar = false;
 
@@ -91,10 +106,14 @@ public class ResourceManager {
      * @return 图片对象
      */
     public Image getImage(String imageName) {
+        if (imageName.contains(".")) {
+            imageName = imageName.split("\\.")[0];
+        }
+
         if (images.containsKey(imageName)) {
             String imagePath = images.get(imageName);
             InputStream stream = getResourceStream(imagePath);
-            if (null != stream) {
+            if (Objects.nonNull(stream)) {
                 return new Image(stream);
             }
         }
@@ -112,7 +131,7 @@ public class ResourceManager {
         if (medias.containsKey(musicName)) {
             String relativePath = medias.get(musicName);
             URL musicRes = getClass().getClassLoader().getResource(relativePath);
-            if (null == musicRes) {
+            if (Objects.isNull(musicRes)) {
                 log.error("cannot get media resource {}", relativePath);
                 return null;
             }
@@ -175,7 +194,7 @@ public class ResourceManager {
      */
     private void loadResourceFromOuter(String resourceType, HashMap<String, String> container) {
         URL url = getClass().getClassLoader().getResource(resourceType);
-        if (null == url) {
+        if (Objects.isNull(url)) {
             log.error("{} resources is not exist!", resourceType);
             return;
         }

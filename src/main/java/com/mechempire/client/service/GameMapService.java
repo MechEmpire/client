@@ -1,6 +1,5 @@
 package com.mechempire.client.service;
 
-import com.mechempire.sdk.runtime.GameMap;
 import javafx.scene.layout.Pane;
 import org.mapeditor.core.Map;
 import org.mapeditor.core.MapLayer;
@@ -41,15 +40,14 @@ public interface GameMapService {
     /**
      * 初始化游戏地图
      *
-     * @return 游戏地图对象
+     * @param originMap 原始地图对象
      */
-    GameMap initGameMapObject(Map originMap);
+    void initGameMapObject(Map originMap);
 
     /**
      * 初始化地图组件对象
      *
-     * @param layer   地图层对象
-     * @param gameMap 地图对象
+     * @param layer 地图层对象
      */
-    void initGameMapComponent(MapLayer layer, GameMap gameMap);
+    void initGameMapComponent(MapLayer layer);
 }

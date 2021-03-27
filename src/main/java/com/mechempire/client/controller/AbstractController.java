@@ -15,6 +15,5 @@ public abstract class AbstractController {
      *
      * @param stage
      */
-    public void show(Stage stage) {
-    }
+    public abstract void show(Stage stage);
 }

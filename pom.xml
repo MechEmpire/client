@@ -29,8 +29,6 @@
             <groupId>com.mechempire</groupId>
             <artifactId>sdk</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${user.home}/Documents/Working/mechempire/sdk/target/sdk-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -124,6 +122,12 @@
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
             <version>3.14.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.73</version>
         </dependency>
 
         <!--        <dependency>-->
