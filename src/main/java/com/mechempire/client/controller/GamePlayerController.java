@@ -40,13 +40,21 @@ public class GamePlayerController extends AbstractController {
     @Override
     public void show(Stage stage) {
         // 增加一个毁灭者载具
-        DestroyerVehicle destroyerVehicle = new DestroyerVehicle();
-        destroyerVehicle.setId(111);
-        Rectangle rectangle = new Rectangle(destroyerVehicle.getStartX(), destroyerVehicle.getStartY(),
-                destroyerVehicle.getWidth(), destroyerVehicle.getLength());
-        rectangle.setFill(Paint.valueOf("#ffffff"));
-        destroyerVehicle.setShape(rectangle);
-        gameMap.addMapComponent(destroyerVehicle);
+        DestroyerVehicle destroyerVehicleRed = new DestroyerVehicle();
+        destroyerVehicleRed.setId(0);
+        Rectangle rectangleRed = new Rectangle(destroyerVehicleRed.getStartX(), destroyerVehicleRed.getStartY(),
+                destroyerVehicleRed.getWidth(), destroyerVehicleRed.getLength());
+        rectangleRed.setFill(Paint.valueOf("#ff0000"));
+        destroyerVehicleRed.setShape(rectangleRed);
+        gameMap.addMapComponent(destroyerVehicleRed);
+
+        DestroyerVehicle destroyerVehicleBlue = new DestroyerVehicle();
+        destroyerVehicleBlue.setId(4);
+        Rectangle rectangleBlue = new Rectangle(destroyerVehicleBlue.getStartX(), destroyerVehicleBlue.getStartY(),
+                destroyerVehicleBlue.getWidth(), destroyerVehicleBlue.getLength());
+        rectangleBlue.setFill(Paint.valueOf("#0000ff"));
+        destroyerVehicleBlue.setShape(rectangleBlue);
+        gameMap.addMapComponent(destroyerVehicleBlue);
 
         gamePlayerView.setStage(stage);
         gamePlayerView.render();

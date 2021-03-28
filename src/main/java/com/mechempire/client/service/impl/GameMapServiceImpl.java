@@ -123,7 +123,7 @@ public class GameMapServiceImpl implements GameMapService {
     public void initGameMapComponent(MapLayer layer) {
         List<MapObject> objectList = ((ObjectGroup) layer).getObjects();
         for (MapObject mapObject : objectList) {
-            // 1 表示 id = 1 的载具, 暂时先写死, 不需要修改
+            // 1 表示所有的组件 id = 1, 暂时先写死, 不需要修改
             AbstractGameMapComponent gameMapComponent = createComponent(mapObject.getType(), (short) 1);
 
             if (Objects.isNull(gameMapComponent)) {
@@ -140,7 +140,7 @@ public class GameMapServiceImpl implements GameMapService {
                 gameMapComponent.setShape(new Ellipse(originShape.getX(), originShape.getY(),
                         originShape.getWidth(), originShape.getHeight()));
             }
-            
+
             gameMapComponent.setName(mapObject.getName());
             gameMapComponent.setAffinity(Short.parseShort(mapObject.getProperties().getProperties().get(0).getValue()));
             gameMapComponent.setLength(uiManager.coordinateYConvert(mapObject.getHeight()));

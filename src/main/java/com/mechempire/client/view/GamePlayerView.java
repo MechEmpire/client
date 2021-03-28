@@ -67,8 +67,10 @@ public class GamePlayerView extends AbstractView {
                 }
             }
 
-            DestroyerVehicle destroyerVehicle = (DestroyerVehicle) gameMap.getMapComponent(111);
-            root.getChildren().add(destroyerVehicle.getShape());
+            DestroyerVehicle destroyerVehicleRed = (DestroyerVehicle) gameMap.getMapComponent(0);
+            DestroyerVehicle destroyerVehicleBlue = (DestroyerVehicle) gameMap.getMapComponent(4);
+            root.getChildren().add(destroyerVehicleRed.getShape());
+            root.getChildren().add(destroyerVehicleBlue.getShape());
 
             // 连接服务器, 同步数据
             new Thread(() -> {
