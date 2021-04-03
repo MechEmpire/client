@@ -12,6 +12,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Ellipse;
 import lombok.extern.slf4j.Slf4j;
 import org.mapeditor.core.*;
+import org.mapeditor.io.TMXMapReader;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,18 @@ public class GameMapServiceImpl implements GameMapService {
     private ResourceManager resourceManager;
 
     @Override
-    public void initGameMapBackground(MapLayer layer, Pane mapContainer) {
+    public Map getOriginMap(String mapName) {
+        try {
+            TMXMapReader mapReader = new TMXMapReader();
+            return mapReader.readMap(getClass().getResource("/map/" + mapName).toString());
+        } catch (Exception e) {
+            log.error("read map filer error: {}", e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
+    public void initGameMapBackground(MapLayer layer) {
         ImageData backgroundImageData = ((ImageLayer) layer).getImage();
         Image sourceImage = resourceManager.getImage(backgroundImageData.getSource());
         BackgroundImage backgroundImage = new BackgroundImage(
@@ -55,11 +67,11 @@ public class GameMapServiceImpl implements GameMapService {
                 BackgroundPosition.CENTER,
                 BackgroundSize.DEFAULT
         );
-        mapContainer.setBackground(new Background(backgroundImage));
+        gameMap.setBackground(new Background(backgroundImage));
     }
 
     @Override
-    public void initGameMapTile(MapLayer layer, Pane mapContainer) {
+    public void initGameMapTile(MapLayer layer) {
         ImageData imageData = ((ImageLayer) layer).getImage();
         Image image = resourceManager.getImage(imageData.getSource());
         ImageView view = new ImageView(image);
@@ -70,9 +82,11 @@ public class GameMapServiceImpl implements GameMapService {
         if (Objects.nonNull(layer.getOpacity())) {
             view.setOpacity(layer.getOpacity());
         }
-        mapContainer.setPrefHeight(uiManager.coordinateYConvert(image.getHeight()));
-        mapContainer.setPrefWidth(uiManager.coordinateXConvert(image.getWidth()));
-        mapContainer.getChildren().add(view);
+        gameMap.getImageViewList().add(view);
+        // todo 这两句作用暂定
+//        mapContainer.setPrefHeight(uiManager.coordinateYConvert(image.getHeight()));
+//        mapContainer.setPrefWidth(uiManager.coordinateXConvert(image.getWidth()));
+//        mapContainer.getChildren().add(view);
     }
 
     @Override
@@ -142,7 +156,7 @@ public class GameMapServiceImpl implements GameMapService {
             }
 
             gameMapComponent.setName(mapObject.getName());
-            gameMapComponent.setAffinity(Short.parseShort(mapObject.getProperties().getProperties().get(0).getValue()));
+            gameMapComponent.setAffinity(Integer.parseInt(mapObject.getProperties().getProperties().get(0).getValue()));
             gameMapComponent.setLength(uiManager.coordinateYConvert(mapObject.getHeight()));
             gameMapComponent.setWidth(uiManager.coordinateXConvert(mapObject.getWidth()));
             gameMapComponent.setStartX(uiManager.coordinateXConvert(mapObject.getX()));

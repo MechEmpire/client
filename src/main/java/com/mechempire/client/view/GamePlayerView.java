@@ -1,18 +1,12 @@
 package com.mechempire.client.view;
 
 import com.mechempire.client.manager.UIManager;
-import com.mechempire.client.network.MechEmpireClient;
 import com.mechempire.client.service.GameMapService;
 import com.mechempire.sdk.core.component.DestroyerVehicle;
 import com.mechempire.sdk.runtime.GameMap;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import lombok.extern.slf4j.Slf4j;
-import org.mapeditor.core.ImageLayer;
-import org.mapeditor.core.Map;
-import org.mapeditor.core.MapLayer;
-import org.mapeditor.core.ObjectGroup;
-import org.mapeditor.io.TMXMapReader;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -38,48 +32,39 @@ public class GamePlayerView extends AbstractView {
     @Resource
     private GameMap gameMap;
 
-    @Resource
-    private MechEmpireClient mechEmpireClient;
-
     @Override
     public void render() {
         try {
             root = new Pane();
+
             // map reader
-            TMXMapReader mapReader = new TMXMapReader();
-            Map originMap = mapReader.readMap(getClass().getResource("/map/map_v1.tmx").toString());
-            MapLayer layer;
+//            TMXMapReader mapReader = new TMXMapReader();
+//            Map originMap = mapReader.readMap(getClass().getResource("/map/map_v1.tmx").toString());
+//            MapLayer layer;
 
-            gameMapService.initGameMapObject(originMap);
+//            gameMapService.initGameMapObject(originMap);
+//            Canvas canvas = new Canvas(gameMap.getWidth(), gameMap.getLength());
+//            GraphicsContext gc = canvas.getGraphicsContext2D();
+//
+//            gc.setStroke(Color.RED);
+//            gc.setLineWidth(5);
+//            gc.strokeLine(20, 60, 120, 60);
+//
+//            gc.setStroke(Color.BLUE);
+//            gc.setLineWidth(5);
+//            gc.strokeLine(1160, 60, 1260, 60);
+//            root.getChildren().add(canvas);
 
-            // 初始化地图组件
-            for (int i = 0; i < originMap.getLayerCount(); i++) {
-                layer = originMap.getLayer(i);
+            log.info("{}", Thread.currentThread().getName());
+            root.setBackground(gameMap.getBackground());
+            gameMap.getImageViewList().forEach(imageView -> root.getChildren().add(imageView));
 
-                if (layer instanceof ImageLayer) {
-                    if (layer.getName().equals("background")) {
-                        gameMapService.initGameMapBackground(layer, root);
-                    } else {
-                        gameMapService.initGameMapTile(layer, root);
-                    }
-                } else if (layer instanceof ObjectGroup) {
-                    gameMapService.initGameMapComponent(layer);
-                }
-            }
+            log.info("game_map_component: {}", gameMap.getComponents());
 
             DestroyerVehicle destroyerVehicleRed = (DestroyerVehicle) gameMap.getMapComponent(0);
             DestroyerVehicle destroyerVehicleBlue = (DestroyerVehicle) gameMap.getMapComponent(4);
             root.getChildren().add(destroyerVehicleRed.getShape());
-            root.getChildren().add(destroyerVehicleBlue.getShape());
-
-            // 连接服务器, 同步数据
-            new Thread(() -> {
-                try {
-                    mechEmpireClient.run();
-                } catch (Exception e) {
-                    log.error("client run error: {}", e.getMessage(), e);
-                }
-            }).start();
+//            root.getChildren().add(destroyerVehicleBlue.getShape());
 
             uiManager.initCommonStage(stage);
             stage.setScene(new Scene(root, uiManager.getWindowWidth(), uiManager.getWindowHeight()));

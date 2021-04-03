@@ -5,6 +5,7 @@ import com.mechempire.client.controller.GamePlayerController;
 import com.mechempire.client.manager.ResourceManager;
 import com.mechempire.client.manager.UIManager;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -40,6 +41,7 @@ public class HomeView extends AbstractView {
     @Resource
     private GamePlayerController gamePlayerController;
 
+    @Override
     public void render() {
         root = new Pane();
         Image backgroundImage = resourceManager.getImage("background");

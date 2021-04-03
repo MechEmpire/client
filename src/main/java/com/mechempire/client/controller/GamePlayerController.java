@@ -1,7 +1,6 @@
 package com.mechempire.client.controller;
 
-import com.mechempire.client.manager.UIManager;
-import com.mechempire.client.service.GameMapService;
+import com.mechempire.client.network.MechEmpireClient;
 import com.mechempire.client.view.GamePlayerView;
 import com.mechempire.sdk.core.component.DestroyerVehicle;
 import com.mechempire.sdk.runtime.GameMap;
@@ -26,20 +25,17 @@ import javax.annotation.Resource;
 public class GamePlayerController extends AbstractController {
 
     @Resource
-    private GameMapService gameMapService;
+    private GamePlayerView gamePlayerView;
 
     @Resource
-    private UIManager uiManager;
+    private MechEmpireClient mechEmpireClient;
 
     @Resource
     private GameMap gameMap;
 
-    @Resource
-    private GamePlayerView gamePlayerView;
-
     @Override
     public void show(Stage stage) {
-        // 增加一个毁灭者载具
+        // 增加红方载具
         DestroyerVehicle destroyerVehicleRed = new DestroyerVehicle();
         destroyerVehicleRed.setId(0);
         Rectangle rectangleRed = new Rectangle(destroyerVehicleRed.getStartX(), destroyerVehicleRed.getStartY(),
@@ -48,6 +44,7 @@ public class GamePlayerController extends AbstractController {
         destroyerVehicleRed.setShape(rectangleRed);
         gameMap.addMapComponent(destroyerVehicleRed);
 
+        // 增加蓝方载具
         DestroyerVehicle destroyerVehicleBlue = new DestroyerVehicle();
         destroyerVehicleBlue.setId(4);
         Rectangle rectangleBlue = new Rectangle(destroyerVehicleBlue.getStartX(), destroyerVehicleBlue.getStartY(),
@@ -55,28 +52,17 @@ public class GamePlayerController extends AbstractController {
         rectangleBlue.setFill(Paint.valueOf("#0000ff"));
         destroyerVehicleBlue.setShape(rectangleBlue);
         gameMap.addMapComponent(destroyerVehicleBlue);
-
         gamePlayerView.setStage(stage);
-        gamePlayerView.render();
+        
+        // 连接服务器, 同步数据
+        new Thread(() -> {
+            try {
+                mechEmpireClient.run();
+            } catch (Exception e) {
+                log.error("client run error: {}", e.getMessage(), e);
+            }
+        }).start();
 
-//        gameMapService.getGameMap().getComponents();
-
-//        AbstractGameMapComponent sprite = GameMapComponentFactory.createComponent();
-
-
-//        gameMapService.getGameMap().add
-
-        // 17
-        //
-//        DefaultObstacle defaultObstacle = (DefaultObstacle) gameMapService.getGameMap().getMapComponent(17);
-//        log.info("obstacle: {}", defaultObstacle.getName());
-
-
-//        log.info("game_map: {}", gameMapService.getGameMap().getComponents());
-
-        // main loop
-
-        // pull data
-        // update ui
+//        gamePlayerView.render();
     }
 }

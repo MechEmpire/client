@@ -13,20 +13,26 @@ import org.mapeditor.core.MapLayer;
 public interface GameMapService {
 
     /**
+     * 获取原始地图数据, 解析 tiled 文件
+     *
+     * @param mapName map 名称
+     * @return 地图原始数据
+     */
+    Map getOriginMap(String mapName);
+
+    /**
      * 读取地图文件, 初始化地图背景图片
      *
-     * @param layer        地图层对象
-     * @param mapContainer 地图容器对象
+     * @param layer 地图层对象
      */
-    void initGameMapBackground(MapLayer layer, Pane mapContainer);
+    void initGameMapBackground(MapLayer layer);
 
     /**
      * 初始化地图对象
      *
-     * @param layer        地图层对象
-     * @param mapContainer 地图容器对象
+     * @param layer 地图层对象
      */
-    void initGameMapTile(MapLayer layer, Pane mapContainer);
+    void initGameMapTile(MapLayer layer);
 
     /**
      * 初始化 tile 层
