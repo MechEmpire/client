@@ -61,9 +61,9 @@ public class GamePlayerView extends AbstractView {
 
             log.info("game_map_component: {}", gameMap.getComponents());
 
-            DestroyerVehicle destroyerVehicleRed = (DestroyerVehicle) gameMap.getMapComponent(0);
-            DestroyerVehicle destroyerVehicleBlue = (DestroyerVehicle) gameMap.getMapComponent(4);
-            root.getChildren().add(destroyerVehicleRed.getShape());
+//            DestroyerVehicle destroyerVehicleRed = (DestroyerVehicle) gameMap.getMapComponent(0);
+//            DestroyerVehicle destroyerVehicleBlue = (DestroyerVehicle) gameMap.getMapComponent(4);
+//            root.getChildren().add(destroyerVehicleRed.getShape());
 //            root.getChildren().add(destroyerVehicleBlue.getShape());
 
             uiManager.initCommonStage(stage);

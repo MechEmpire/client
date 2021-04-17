@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.mapeditor.core.ImageLayer;
 import org.mapeditor.core.Map;
 import org.mapeditor.core.MapLayer;
-import org.mapeditor.core.ObjectGroup;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -66,7 +65,7 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
         log.info("channel active, send message to server.");
         builder.clear();
         builder.setMessage("init");
-        builder.setCommand(CommonDataProto.CommandEnum.INIT);
+        builder.setCommand(CommonDataProto.CommonData.CommandEnum.INIT);
         CommonDataProto.InitRequest.Builder initRequestBuild = CommonDataProto.InitRequest.newBuilder();
         initRequestBuild.setScreenHeight(uiManager.getScreenHeight());
         initRequestBuild.setScreenWidth(uiManager.getScreenWidth());
@@ -83,15 +82,17 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        if (commonData.getCommand().equals(CommonDataProto.CommandEnum.INIT)) {
+        if (commonData.getCommand().equals(CommonDataProto.CommonData.CommandEnum.INIT)) {
             builder.clear();
-            builder.setCommand(CommonDataProto.CommandEnum.START);
+            builder.setCommand(CommonDataProto.CommonData.CommandEnum.START);
             builder.setMessage("start");
             ctx.writeAndFlush(builder.build());
 
             CommonDataProto.EngineWorld engineWorld = commonData.getData().unpack(CommonDataProto.EngineWorld.class);
-            Map originMap = gameMapService.getOriginMap(engineWorld.getMapName());
+            Map originMap = gameMapService.getOriginMap(engineWorld.getGameMap().getMapName());
             gameMapService.initGameMapObject(originMap);
+
+//            log.info("components: {}", engineWorld.getComponentsMap());
 
             // init map
             MapLayer layer;
@@ -105,33 +106,37 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
                     } else {
                         gameMapService.initGameMapTile(layer);
                     }
-                } else if (layer instanceof ObjectGroup) {
-                    gameMapService.initGameMapComponent(layer);
                 }
             }
 
-            Platform.runLater(() -> {
-                gamePlayerView.render();
+            log.info("engineWorld: {}", engineWorld);
+
+            engineWorld.getGameMap().getComponentsMap().forEach((id, component) -> {
+//                AbstractGameMapComponent gameMapComponent = createComponent(component.getType(), (short) 1);
+//                if (Objects.isNull(gameMapComponent)) {
+//                    return;
+//                }
+//                gameMapComponent.setId(id);
+//                if (component.getShape().equals(CommonDataProto.MapComponent.ComponentShape.RECTANGLE2D)) {
+//                    gameMapComponent.setShape(new Rectangle(component.getStartX(),
+//                            component.getStartY(), component.getWidth(), component.getLength()));
+//                } else if (component.getShape().equals(CommonDataProto.MapComponent.ComponentShape.ELLIPSE2D)) {
+//                    gameMapComponent.setShape(new Ellipse(component.getStartX(),
+//                            component.getStartY(), component.getWidth(), component.getLength()));
+//                }
+//
+//                gameMapComponent.setName(component.getName());
+//                gameMapComponent.setAffinity(component.getAffinity());
+//                gameMapComponent.setLength(uiManager.coordinateYConvert(component.getLength()));
+//                gameMapComponent.setWidth(uiManager.coordinateXConvert(component.getWidth()));
+//                gameMapComponent.setStartX(uiManager.coordinateXConvert(component.getStartX()));
+//                gameMapComponent.setStartY(uiManager.coordinateYConvert(component.getStartY()));
+//                gameMapComponent.setType(component.getType());
+//                gameMap.addMapComponent(gameMapComponent);
             });
 
-//            // 增加红方载具
-//            DestroyerVehicle destroyerVehicleRed = new DestroyerVehicle();
-//            destroyerVehicleRed.setId(0);
-//            Rectangle rectangleRed = new Rectangle(destroyerVehicleRed.getStartX(), destroyerVehicleRed.getStartY(),
-//                    destroyerVehicleRed.getWidth(), destroyerVehicleRed.getLength());
-//            rectangleRed.setFill(Paint.valueOf("#ff0000"));
-//            destroyerVehicleRed.setShape(rectangleRed);
-//            gameMap.addMapComponent(destroyerVehicleRed);
-//
-//            // 增加蓝方载具
-//            DestroyerVehicle destroyerVehicleBlue = new DestroyerVehicle();
-//            destroyerVehicleBlue.setId(4);
-//            Rectangle rectangleBlue = new Rectangle(destroyerVehicleBlue.getStartX(), destroyerVehicleBlue.getStartY(),
-//                    destroyerVehicleBlue.getWidth(), destroyerVehicleBlue.getLength());
-//            rectangleBlue.setFill(Paint.valueOf("#0000ff"));
-//            destroyerVehicleBlue.setShape(rectangleBlue);
-//            gameMap.addMapComponent(destroyerVehicleBlue);
-        } else if (commonData.getCommand().equals(CommonDataProto.CommandEnum.RUNNING)) {
+            Platform.runLater(() -> gamePlayerView.render());
+        } else if (commonData.getCommand().equals(CommonDataProto.CommonData.CommandEnum.RUNNING)) {
             if (commonData.getData().getValue().isEmpty()) {
                 return;
             }
@@ -141,19 +146,14 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
 
             for (int i = 0; i < messageList.getResultMessageCount(); i++) {
                 CommonDataProto.ResultMessageList.ResultMessage message = messageList.getResultMessage(i);
-                DestroyerVehicle destroyerVehicle = (DestroyerVehicle) gameMap.getMapComponent(message.getComponentId());
-
-                if (Objects.nonNull(destroyerVehicle)) {
-                    Shape shape = destroyerVehicle.getShape();
-                    shape.setTranslateX(message.getPositionX());
-                    shape.setTranslateY(message.getPositionY());
+                if (gameMap.getMapComponent(message.getComponentId()) instanceof DestroyerVehicle) {
+                    DestroyerVehicle destroyerVehicle = (DestroyerVehicle) gameMap.getMapComponent(message.getComponentId());
+                    if (Objects.nonNull(destroyerVehicle)) {
+                        Shape shape = destroyerVehicle.getShape();
+                        shape.setTranslateX(message.getPositionX());
+                        shape.setTranslateY(message.getPositionY());
+                    }
                 }
-
-//                System.out.printf("component_id: %d, position_x: %.2f, position_y: %.2f\n",
-//                        message.getComponentId(),
-//                        message.getPositionX(),
-//                        message.getPositionY()
-//                );
             }
         }
 //        System.out.println("======");
@@ -204,7 +204,7 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
             if (null != ctx.channel() && ctx.channel().isActive()) {
                 builder.clear();
                 builder.setMessage("ping");
-                builder.setCommand(CommonDataProto.CommandEnum.PING);
+                builder.setCommand(CommonDataProto.CommonData.CommandEnum.PING);
                 ctx.writeAndFlush(builder.build());
                 builder.clear();
             } else {
