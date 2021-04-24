@@ -5,7 +5,9 @@ import com.mechempire.client.manager.UIManager;
 import com.mechempire.client.network.MechEmpireClient;
 import com.mechempire.client.service.GameMapService;
 import com.mechempire.client.view.GamePlayerView;
+import com.mechempire.sdk.constant.MapComponent;
 import com.mechempire.sdk.core.component.DestroyerVehicle;
+import com.mechempire.sdk.core.game.AbstractGameMapComponent;
 import com.mechempire.sdk.proto.CommonDataProto;
 import com.mechempire.sdk.runtime.GameMap;
 import io.netty.channel.ChannelHandler;
@@ -14,6 +16,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import javafx.application.Platform;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import lombok.extern.slf4j.Slf4j;
 import org.mapeditor.core.ImageLayer;
@@ -25,6 +29,8 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import static com.mechempire.sdk.core.factory.GameMapComponentFactory.createComponent;
 
 /**
  * package: com.mechempire.client.network.handles
@@ -92,8 +98,6 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
             Map originMap = gameMapService.getOriginMap(engineWorld.getGameMap().getMapName());
             gameMapService.initGameMapObject(originMap);
 
-//            log.info("components: {}", engineWorld.getComponentsMap());
-
             // init map
             MapLayer layer;
             // 初始化地图组件
@@ -109,32 +113,49 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
                 }
             }
 
-            log.info("engineWorld: {}", engineWorld);
+//            log.info("engine_component: {}", engineWorld.getGameMap().getComponentsMap());
 
             engineWorld.getGameMap().getComponentsMap().forEach((id, component) -> {
-//                AbstractGameMapComponent gameMapComponent = createComponent(component.getType(), (short) 1);
-//                if (Objects.isNull(gameMapComponent)) {
-//                    return;
-//                }
-//                gameMapComponent.setId(id);
-//                if (component.getShape().equals(CommonDataProto.MapComponent.ComponentShape.RECTANGLE2D)) {
-//                    gameMapComponent.setShape(new Rectangle(component.getStartX(),
-//                            component.getStartY(), component.getWidth(), component.getLength()));
-//                } else if (component.getShape().equals(CommonDataProto.MapComponent.ComponentShape.ELLIPSE2D)) {
-//                    gameMapComponent.setShape(new Ellipse(component.getStartX(),
-//                            component.getStartY(), component.getWidth(), component.getLength()));
-//                }
-//
-//                gameMapComponent.setName(component.getName());
-//                gameMapComponent.setAffinity(component.getAffinity());
-//                gameMapComponent.setLength(uiManager.coordinateYConvert(component.getLength()));
-//                gameMapComponent.setWidth(uiManager.coordinateXConvert(component.getWidth()));
-//                gameMapComponent.setStartX(uiManager.coordinateXConvert(component.getStartX()));
-//                gameMapComponent.setStartY(uiManager.coordinateYConvert(component.getStartY()));
-//                gameMapComponent.setType(component.getType());
-//                gameMap.addMapComponent(gameMapComponent);
+                try {
+                    MapComponent mapComponent = MapComponent.valueOf(component.getType());
+                    AbstractGameMapComponent gameMapComponent = createComponent(mapComponent.getClazz());
+                    if (Objects.isNull(gameMapComponent)) {
+                        return;
+                    }
+                    gameMapComponent.setMapComponent(mapComponent);
+                    if (component.getShape().equals(CommonDataProto.MapComponent.ComponentShape.RECTANGLE2D)) {
+                        gameMapComponent.setShape(
+                                new Rectangle(
+                                        component.getStartX(),
+                                        component.getStartY(),
+                                        component.getWidth(),
+                                        component.getLength()
+                                )
+                        );
+                    } else if (component.getShape().equals(CommonDataProto.MapComponent.ComponentShape.ELLIPSE2D)) {
+                        double radiusX = component.getWidth() / 2.0 + 1.0;
+                        double radiusY = component.getLength() / 2.0 + 1.0;
+                        gameMapComponent.setShape(
+                                new Ellipse(
+                                        component.getStartX() + radiusX,
+                                        component.getStartY() + radiusY,
+                                        radiusX,
+                                        radiusY
+                                )
+                        );
+                    }
+                    gameMapComponent.setId(component.getId());
+                    gameMapComponent.setName(component.getName());
+                    gameMapComponent.setAffinity(component.getAffinity());
+                    gameMapComponent.setLength(component.getLength());
+                    gameMapComponent.setWidth(component.getWidth());
+                    gameMapComponent.setStartX(component.getStartX());
+                    gameMapComponent.setStartY(component.getStartY());
+                    gameMap.addMapComponent(gameMapComponent);
+                } catch (Exception e) {
+                    log.error("init map component, id: {}, component: {} error: {}", id, component, e.getMessage(), e);
+                }
             });
-
             Platform.runLater(() -> gamePlayerView.render());
         } else if (commonData.getCommand().equals(CommonDataProto.CommonData.CommandEnum.RUNNING)) {
             if (commonData.getData().getValue().isEmpty()) {
@@ -146,17 +167,17 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
 
             for (int i = 0; i < messageList.getResultMessageCount(); i++) {
                 CommonDataProto.ResultMessageList.ResultMessage message = messageList.getResultMessage(i);
-                if (gameMap.getMapComponent(message.getComponentId()) instanceof DestroyerVehicle) {
-                    DestroyerVehicle destroyerVehicle = (DestroyerVehicle) gameMap.getMapComponent(message.getComponentId());
-                    if (Objects.nonNull(destroyerVehicle)) {
-                        Shape shape = destroyerVehicle.getShape();
-                        shape.setTranslateX(message.getPositionX());
-                        shape.setTranslateY(message.getPositionY());
-                    }
+                AbstractGameMapComponent gameMapComponent = gameMap.getMapComponent(message.getComponentId());
+                if (Objects.isNull(gameMapComponent)) {
+                    continue;
+                }
+                if ("vehicle".equals(gameMapComponent.getMapComponent().getType())) {
+                    DestroyerVehicle destroyerVehicle = (DestroyerVehicle) gameMapComponent;
+                    Shape shape = destroyerVehicle.getShape();
+                    shape.relocate(message.getPositionX(), message.getPositionY());
                 }
             }
         }
-//        System.out.println("======");
     }
 
     @Override

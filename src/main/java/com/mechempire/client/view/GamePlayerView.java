@@ -2,10 +2,10 @@ package com.mechempire.client.view;
 
 import com.mechempire.client.manager.UIManager;
 import com.mechempire.client.service.GameMapService;
-import com.mechempire.sdk.core.component.DestroyerVehicle;
 import com.mechempire.sdk.runtime.GameMap;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -60,12 +60,17 @@ public class GamePlayerView extends AbstractView {
             gameMap.getImageViewList().forEach(imageView -> root.getChildren().add(imageView));
 
             log.info("game_map_component: {}", gameMap.getComponents());
-
-//            DestroyerVehicle destroyerVehicleRed = (DestroyerVehicle) gameMap.getMapComponent(0);
-//            DestroyerVehicle destroyerVehicleBlue = (DestroyerVehicle) gameMap.getMapComponent(4);
-//            root.getChildren().add(destroyerVehicleRed.getShape());
-//            root.getChildren().add(destroyerVehicleBlue.getShape());
-
+            gameMap.getComponents().forEach((id, component) -> {
+                if ("vehicle".equalsIgnoreCase(component.getMapComponent().getType())) {
+                    if (component.getAffinity() == 1) {
+                        component.getShape().setFill(Color.BLUE);
+                    } else if (component.getAffinity() == -1) {
+                        component.getShape().setFill(Color.RED);
+                    }
+                    log.info("{}", component.getShape());
+                    root.getChildren().add(component.getShape());
+                }
+            });
             uiManager.initCommonStage(stage);
             stage.setScene(new Scene(root, uiManager.getWindowWidth(), uiManager.getWindowHeight()));
             stage.show();
