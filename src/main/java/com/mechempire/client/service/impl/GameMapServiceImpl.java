@@ -4,12 +4,10 @@ import com.mechempire.client.manager.ResourceManager;
 import com.mechempire.client.manager.UIManager;
 import com.mechempire.client.service.GameMapService;
 import com.mechempire.client.util.ImageUtil;
-import com.mechempire.sdk.core.game.AbstractGameMapComponent;
 import com.mechempire.sdk.runtime.GameMap;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Ellipse;
 import lombok.extern.slf4j.Slf4j;
 import org.mapeditor.core.*;
 import org.mapeditor.io.TMXMapReader;
@@ -17,13 +15,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
-
-import static com.mechempire.sdk.core.factory.GameMapComponentFactory.createComponent;
 
 /**
  * package: com.mechempire.client.service.impl
@@ -49,7 +42,7 @@ public class GameMapServiceImpl implements GameMapService {
     public Map getOriginMap(String mapName) {
         try {
             TMXMapReader mapReader = new TMXMapReader();
-            return mapReader.readMap(getClass().getResource("/map/" + mapName).toString());
+            return mapReader.readMap(Objects.requireNonNull(getClass().getResource("/map/" + mapName)).toString());
         } catch (Exception e) {
             log.error("read map filer error: {}", e.getMessage(), e);
         }
@@ -67,7 +60,7 @@ public class GameMapServiceImpl implements GameMapService {
                 BackgroundPosition.CENTER,
                 BackgroundSize.DEFAULT
         );
-        gameMap.setBackground(new Background(backgroundImage));
+//        gameMap.setBackground(new Background(backgroundImage));
     }
 
     @Override
@@ -82,7 +75,7 @@ public class GameMapServiceImpl implements GameMapService {
         if (Objects.nonNull(layer.getOpacity())) {
             view.setOpacity(layer.getOpacity());
         }
-        gameMap.getImageViewList().add(view);
+//        gameMap.getImageViewList().add(view);
         // todo 这两句作用暂定
 //        mapContainer.setPrefHeight(uiManager.coordinateYConvert(image.getHeight()));
 //        mapContainer.setPrefWidth(uiManager.coordinateXConvert(image.getWidth()));
@@ -135,34 +128,34 @@ public class GameMapServiceImpl implements GameMapService {
 
     @Override
     public void initGameMapComponent(MapLayer layer) {
-        List<MapObject> objectList = ((ObjectGroup) layer).getObjects();
-        for (MapObject mapObject : objectList) {
-            // 1 表示所有的组件 id = 1, 暂时先写死, 不需要修改
-            AbstractGameMapComponent gameMapComponent = createComponent(mapObject.getType(), (short) 1);
-
-            if (Objects.isNull(gameMapComponent)) {
-                continue;
-            }
-
-            gameMapComponent.setId(mapObject.getId());
-            if (mapObject.getShape() instanceof Rectangle2D) {
-                Rectangle2D originShape = (Rectangle2D) mapObject.getShape();
-                gameMapComponent.setShape(new javafx.scene.shape.Rectangle(originShape.getX(),
-                        originShape.getY(), originShape.getWidth(), originShape.getHeight()));
-            } else if (mapObject.getShape() instanceof Ellipse2D) {
-                Ellipse2D originShape = (Ellipse2D) mapObject.getShape();
-                gameMapComponent.setShape(new Ellipse(originShape.getX(), originShape.getY(),
-                        originShape.getWidth(), originShape.getHeight()));
-            }
-
-            gameMapComponent.setName(mapObject.getName());
-            gameMapComponent.setAffinity(Integer.parseInt(mapObject.getProperties().getProperties().get(0).getValue()));
-            gameMapComponent.setLength(uiManager.coordinateYConvert(mapObject.getHeight()));
-            gameMapComponent.setWidth(uiManager.coordinateXConvert(mapObject.getWidth()));
-            gameMapComponent.setStartX(uiManager.coordinateXConvert(mapObject.getX()));
-            gameMapComponent.setStartY(uiManager.coordinateYConvert(mapObject.getY()));
-            gameMapComponent.setType(mapObject.getType());
-            gameMap.addMapComponent(gameMapComponent);
-        }
+//        List<MapObject> objectList = ((ObjectGroup) layer).getObjects();
+//        for (MapObject mapObject : objectList) {
+//            // 1 表示所有的组件 id = 1, 暂时先写死, 不需要修改
+//            AbstractGameMapComponent gameMapComponent = createComponent(mapObject.getType(), (short) 1);
+//
+//            if (Objects.isNull(gameMapComponent)) {
+//                continue;
+//            }
+//
+//            gameMapComponent.setId(mapObject.getId());
+//            if (mapObject.getShape() instanceof Rectangle2D) {
+//                Rectangle2D originShape = (Rectangle2D) mapObject.getShape();
+//                gameMapComponent.setShape(new javafx.scene.shape.Rectangle(originShape.getX(),
+//                        originShape.getY(), originShape.getWidth(), originShape.getHeight()));
+//            } else if (mapObject.getShape() instanceof Ellipse2D) {
+//                Ellipse2D originShape = (Ellipse2D) mapObject.getShape();
+//                gameMapComponent.setShape(new Ellipse(originShape.getX(), originShape.getY(),
+//                        originShape.getWidth(), originShape.getHeight()));
+//            }
+//
+//            gameMapComponent.setName(mapObject.getName());
+//            gameMapComponent.setAffinity(Integer.parseInt(mapObject.getProperties().getProperties().get(0).getValue()));
+//            gameMapComponent.setLength(uiManager.coordinateYConvert(mapObject.getHeight()));
+//            gameMapComponent.setWidth(uiManager.coordinateXConvert(mapObject.getWidth()));
+//            gameMapComponent.setStartX(uiManager.coordinateXConvert(mapObject.getX()));
+//            gameMapComponent.setStartY(uiManager.coordinateYConvert(mapObject.getY()));
+////            gameMapComponent.setType(mapObject.getType());
+//            gameMap.addMapComponent(gameMapComponent);
+//        }
     }
 }

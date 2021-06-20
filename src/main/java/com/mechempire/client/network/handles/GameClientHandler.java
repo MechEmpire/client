@@ -6,10 +6,12 @@ import com.mechempire.client.network.MechEmpireClient;
 import com.mechempire.client.service.GameMapService;
 import com.mechempire.client.view.GamePlayerView;
 import com.mechempire.sdk.constant.MapComponent;
-import com.mechempire.sdk.core.component.DestroyerVehicle;
+import com.mechempire.sdk.constant.MapImageElementType;
+import com.mechempire.sdk.core.component.MapImageElement;
 import com.mechempire.sdk.core.game.AbstractGameMapComponent;
 import com.mechempire.sdk.proto.CommonDataProto;
 import com.mechempire.sdk.runtime.GameMap;
+import com.mechempire.sdk.runtime.Position2D;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -18,11 +20,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import javafx.application.Platform;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import lombok.extern.slf4j.Slf4j;
-import org.mapeditor.core.ImageLayer;
-import org.mapeditor.core.Map;
-import org.mapeditor.core.MapLayer;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -95,25 +93,18 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
             ctx.writeAndFlush(builder.build());
 
             CommonDataProto.EngineWorld engineWorld = commonData.getData().unpack(CommonDataProto.EngineWorld.class);
-            Map originMap = gameMapService.getOriginMap(engineWorld.getGameMap().getMapName());
-            gameMapService.initGameMapObject(originMap);
 
-            // init map
-            MapLayer layer;
-            // 初始化地图组件
-            for (int i = 0; i < originMap.getLayerCount(); i++) {
-                layer = originMap.getLayer(i);
-
-                if (layer instanceof ImageLayer) {
-                    if ("background".equals(layer.getName())) {
-                        gameMapService.initGameMapBackground(layer);
-                    } else {
-                        gameMapService.initGameMapTile(layer);
-                    }
-                }
-            }
-
-//            log.info("engine_component: {}", engineWorld.getGameMap().getComponentsMap());
+            engineWorld.getGameMap().getMapImageElementList().forEach(imageElement -> gameMap.getImageElementList().add(
+                    new MapImageElement(
+                            imageElement.getSource(),
+                            imageElement.getOffsetX(),
+                            imageElement.getOffsetY(),
+                            imageElement.getWidth(),
+                            imageElement.getHeight(),
+                            imageElement.getOpacity(),
+                            MapImageElementType.valueOf(imageElement.getImageType().name())
+                    )
+            ));
 
             engineWorld.getGameMap().getComponentsMap().forEach((id, component) -> {
                 try {
@@ -123,7 +114,7 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
                         return;
                     }
                     gameMapComponent.setMapComponent(mapComponent);
-                    if (component.getShape().equals(CommonDataProto.MapComponent.ComponentShape.RECTANGLE2D)) {
+                    if (component.getShape().equals(CommonDataProto.GameMap.MapComponent.ComponentShape.RECTANGLE2D)) {
                         gameMapComponent.setShape(
                                 new Rectangle(
                                         component.getStartX(),
@@ -132,7 +123,7 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
                                         component.getLength()
                                 )
                         );
-                    } else if (component.getShape().equals(CommonDataProto.MapComponent.ComponentShape.ELLIPSE2D)) {
+                    } else if (component.getShape().equals(CommonDataProto.GameMap.MapComponent.ComponentShape.ELLIPSE2D)) {
                         double radiusX = component.getWidth() / 2.0 + 1.0;
                         double radiusY = component.getLength() / 2.0 + 1.0;
                         gameMapComponent.setShape(
@@ -151,6 +142,7 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
                     gameMapComponent.setWidth(component.getWidth());
                     gameMapComponent.setStartX(component.getStartX());
                     gameMapComponent.setStartY(component.getStartY());
+                    gameMapComponent.setPosition(new Position2D(component.getPosition().getX(), component.getPosition().getY()));
                     gameMap.addMapComponent(gameMapComponent);
                 } catch (Exception e) {
                     log.error("init map component, id: {}, component: {} error: {}", id, component, e.getMessage(), e);
@@ -171,11 +163,9 @@ public class GameClientHandler extends ChannelInboundHandlerAdapter {
                 if (Objects.isNull(gameMapComponent)) {
                     continue;
                 }
-                if ("vehicle".equals(gameMapComponent.getMapComponent().getType())) {
-                    DestroyerVehicle destroyerVehicle = (DestroyerVehicle) gameMapComponent;
-                    Shape shape = destroyerVehicle.getShape();
-                    shape.relocate(message.getPositionX(), message.getPositionY());
-                }
+                gameMapComponent.getPosition().setX(message.getPositionX());
+                gameMapComponent.getPosition().setY(message.getPositionY());
+                Platform.runLater(() -> gamePlayerView.updateMechView(gameMapComponent));
             }
         }
     }
